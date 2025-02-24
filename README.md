@@ -1,3 +1,15 @@
+<p align="center">
+  <picture>
+    <source 
+        media="(prefers-color-scheme: dark)" 
+        srcset="./assets/logo.png">
+    <img 
+        alt="Chikamera Logo" 
+        src="./assets/logo.png" 
+        width="100">
+  </picture>
+</p>
+
 # Chikamera
 
 ## 📝 Abstract
@@ -22,6 +34,12 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 ## 🔎 Reference
 
 - 🧬 Fundamentals
+
+    - Camera:
+
+        - [Camera Conventions](https://camtools.readthedocs.io/en/stable/camera.html)
+
+        - Camera Projections - [Extrinsic](https://ksimek.github.io/2012/08/22/extrinsic/) and [Intrinsic](https://ksimek.github.io/2013/08/13/intrinsic/)
 
     - [Video Analytics](https://facit.ai/insights/video-analytics-guide) by [Facit.AI](https://facit.ai)
 
