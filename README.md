@@ -41,6 +41,8 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
         - Camera Projections - [Extrinsic](https://ksimek.github.io/2012/08/22/extrinsic/) and [Intrinsic](https://ksimek.github.io/2013/08/13/intrinsic/)
 
+        - [Camera FoV](https://commonlands.com/pages/camera-field-of-view-calculator)
+
     - [Video Analytics](https://facit.ai/insights/video-analytics-guide) by [Facit.AI](https://facit.ai)
 
         - [Smart Count](https://facit.ai/video-analytics-software/smart-count)
@@ -70,5 +72,7 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 - 🧮 Frameworks / Libraries:
 
     - [CamTools](https://github.com/yxlao/camtools)
+
+    - [Open3D](https://github.com/isl-org/Open3D) - [Visualization](https://www.open3d.org/docs/release/tutorial/visualization/visualization.html)
 
     - [Ultralytics](https://github.com/ultralytics/ultralytics)

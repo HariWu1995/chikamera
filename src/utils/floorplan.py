@@ -1,20 +1,23 @@
 
 
-def generate_space_grid(width: int, length: int, step: int = 1):
+def generate_space_grid(space_size_h: int, 
+                        space_size_v: int, step: int = 1):
     """
     Generates a grid representation of the event space.
     """
-    x_coords = list(range(0, width, step))
-    y_coords = list(range(0, length, step))
-    grid_pts = [(x, y) for x in x_coords 
-                       for y in y_coords]
+    h_coords = list(range(0, space_size_h, step))
+    v_coords = list(range(0, space_size_v, step))
+    grid_pts = [(h, v) for h in h_coords 
+                       for v in v_coords]
     return grid_pts
 
 
-def get_priority_zones(width: int, length: int):
+def get_priority_zones(space_size_h: int, space_size_v: int):
     """
     Defines key areas that need higher coverage.
     """
-    return [(width//2, length//2), (0, length//2), (width//2, 0)]
+    return [(space_size_h//2, space_size_v//2), 
+            (              0, space_size_v//2), 
+            (space_size_h//2,               0)]
 
 

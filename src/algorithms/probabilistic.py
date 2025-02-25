@@ -6,13 +6,13 @@ import random as rd
 from src.camera.coverage import evaluate_coverage
 
 
-def simulated_annealing(grid_points, camera_coords, camera_range: int,
+def simulated_annealing(grid_points, camera_coords, image_plane_size: int,
                         iterations: int = 1000, temp: int = 100):
     """
     Refines camera placement using simulated annealing.
     """
     best_solution = camera_coords[:]
-    best_coverage = evaluate_coverage(best_solution, camera_range)
+    best_coverage = evaluate_coverage(best_solution, image_plane_size)
     
     pgbar = tqdm(range(iterations))
     for _ in pgbar:
@@ -22,7 +22,7 @@ def simulated_annealing(grid_points, camera_coords, camera_range: int,
         index = rd.randint(0, len(new_solution) - 1)
         new_solution[index] = rd.choice(grid_points)
         
-        new_coverage = evaluate_coverage(new_solution, camera_range)
+        new_coverage = evaluate_coverage(new_solution, image_plane_size)
         delta = new_coverage - best_coverage
         
         if delta > 0 or math.exp(delta / temp) > rd.random():
