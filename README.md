@@ -31,7 +31,7 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 ## 🦾 Features 🦿
 
 ✅  Camera Mesh Allocation
-    <img src="./assets/camera_grid_viz.png" width=200>
+    <img src="./assets/camera_grid_viz.png" width=256>
 
 ⬜ ...
 
