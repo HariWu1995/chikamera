@@ -30,6 +30,10 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 ## 🦾 Features 🦿
 
+✅  Camera Mesh Allocation
+    <img src="./assets/camera_grid_viz.png">
+
+⬜ ...
 
 ## 🔎 Reference
 
