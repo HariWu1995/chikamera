@@ -20,8 +20,9 @@ CAMERA_ANGLE = (-90, 0, 0)   # pitch, yaw, roll in degree
 RESOLUTION_H = 2304
 RESOLUTION_V = 1296
 
-# 1 / 2.8 [inch] => 6.46 × 4.83 [mm]
-F = 4.2         # assumption
+# focus length: assumption
+#   1 / 2.8 [inch] => 6.46 × 4.83 [mm]
+F = 4.2
 FX = 6.4
 FY = 4.8
 

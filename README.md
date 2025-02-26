@@ -25,7 +25,23 @@ combined with:
 
 Refering to the field of *computer vision*, **chikamera** means *thousands* of *scattered* and *intelligent* **cameras**, which provides *beautiful* *flowers* as **insights**.
 
-## 👾 Model(s)
+## 🛢️ Datasets
+
+- Multi-Camera Trajectory Forecasting ([paper](https://arxiv.org/abs/2005.00282) | [repo](https://github.com/olly-styles/Multi-Camera-Trajectory-Forecasting))
+<img src="./assets/camera_layout_WNMF.jpg">
+
+- i.c.sens Multi-View Pedestrian-Tracking Dataset ([dataset](https://service.tib.eu/ldmservice/vdataset/luh-multi-view-pedestrian-tracking))
+<img src="./assets/camera_layout_icSens.jpg">
+
+- Multi-camera Multiple-People Tracking ([project](https://iccv2021-mmp.github.io/subpage/dataset.html) | [repo](https://github.com/damo-cv/MMP_Track1_ICCV21))
+
+- WILDTRACK Multi-Camera Person Dataset ([dataset](https://www.kaggle.com/datasets/aryashah2k/large-scale-multicamera-detection-dataset) | [repo](https://github.com/dataset-ninja/wildtrack))
+
+- EPFL-RLC Multi-Camera Dataset ([project](https://www.epfl.ch/labs/cvlab/data/data-rlc/))
+
+- MTA Multi Camera Track Auto (Game 3D) ([repo](https://github.com/schuar-iosb/mta-dataset))
+
+## 👾 Models
 
 
 ## 🦾 Features 🦿
