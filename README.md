@@ -102,6 +102,27 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 ⬜ **Operational & Strategic Advices** (real-time decisions on resource allocation, booth placements or event layout to optimize visitor flow, safety and emergency planning through real-time occupancy monitoring, etc.)
 
+## 🏆 Benchmark
+
+- **Wildtrack**:
+
+    - **TrackTacular**: Lifting Multi-View Detection and Tracking to the Bird’s Eye View ([paper](https://arxiv.org/pdf/2403.12573v1) | [code](https://github.com/tteepe/TrackTacular))
+    <img src="./assets/camera_binocular_to_3d_voxel.png">
+
+    - **EarlyBird**: Early-Fusion for Multi-View Tracking in the Bird's Eye View ([paper](https://arxiv.org/pdf/2310.13350v1) | [code](https://github.com/tteepe/EarlyBird))
+
+    - **ReST**: Reconfigurable Spatial-Temporal Graph Model for Multi-Camera Multi-Object Tracking ([paper](https://arxiv.org/pdf/2308.13229) | [code](https://github.com/chengche6230/ReST))
+
+- **MOT**(-17 | -20):
+
+    - **UCMCTrack**: Multi-Object Tracking with Uniform Camera Motion Compensation ([paper]() | [code](https://github.com/corfyi/ucmctrack))
+
+    - **CO-MOT** with *COLA* (COopetition Label Assignment) and *TALA* (Tracking Aware Label Assignment) ([paper](https://arxiv.org/pdf/2305.12724v1) | [code](https://github.com/BingfengYan/CO-MOT))
+
+    - **MOTIP**: Multi-Object Tracking as ID Prediction ([paper](https://arxiv.org/pdf/2403.16848v1) | [code](https://github.com/MCG-NJU/MOTIP))
+
+    - **TrackFormer**: Multi-Object Tracking with Transformers ([paper](https://arxiv.org/pdf/2101.02702) | [code](https://github.com/timmeinhardt/trackformer))
+
 ## 🔎 Reference
 
 - 🚀 Case studies:
@@ -114,35 +135,6 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
     - [Multi-Camera Multi-Target Tracking](https://github.com/nolanzzz/mtmct) (Game 3D)
     <img src="./assets/tracking_multi_cam_multi_obj.png">
 
-- ⚜️ Benchmark **Wildtrack**:
-
-    - **TrackTacular**: Lifting Multi-View Detection and Tracking to the Bird’s Eye View ([paper](https://arxiv.org/pdf/2403.12573v1) | [code](https://github.com/tteepe/TrackTacular))
-    <img src="./assets/camera_binocular_to_3d_voxel.png">
-
-    - **EarlyBird**: Early-Fusion for Multi-View Tracking in the Bird's Eye View ([paper](https://arxiv.org/pdf/2310.13350v1) | [code](https://github.com/tteepe/EarlyBird))
-
-    - **ReST**: Reconfigurable Spatial-Temporal Graph Model for Multi-Camera Multi-Object Tracking ([paper](https://arxiv.org/pdf/2308.13229) | [code](https://github.com/chengche6230/ReST))
-
-- 🏆 Benchmark **MOT**(-17 | -20):
-
-    - **UCMCTrack**: Multi-Object Tracking with Uniform Camera Motion Compensation ([paper]() | [code](https://github.com/corfyi/ucmctrack))
-
-    - **CO-MOT** with *COLA* (COopetition Label Assignment) and *TALA* (Tracking Aware Label Assignment) ([paper](https://arxiv.org/pdf/2305.12724v1) | [code](https://github.com/BingfengYan/CO-MOT))
-
-    - **MOTIP**: Multi-Object Tracking as ID Prediction ([paper](https://arxiv.org/pdf/2403.16848v1) | [code](https://github.com/MCG-NJU/MOTIP))
-
-    - **TrackFormer**: Multi-Object Tracking with Transformers ([paper](https://arxiv.org/pdf/2101.02702) | [code](https://github.com/timmeinhardt/trackformer))
-
-    <details>
-
-    <summary>Less Relevant</summary>
-
-    - **DeepSORT**: Simple Online and Realtime Tracking with a Deep Association Metric ([paper](https://arxiv.org/abs/1703.07402) | [code](https://github.com/nwojke/deep_sort) | [code-realtime](https://github.com/levan92/deep_sort_realtime))
-
-    - **ADA-Track**: End-to-End Multi-Camera 3D Multi-Object Tracking ([paper](https://arxiv.org/pdf/2405.08909v1) | [code](https://github.com/dsx0511/ADA-Track))
-
-    </details> 
-
 - 🧮 Frameworks / Libraries:
 
     - [CamTools](https://github.com/yxlao/camtools)
@@ -152,3 +144,9 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
     - [Ultralytics](https://github.com/ultralytics/ultralytics)
 
     - [TorchReID](https://github.com/KaiyangZhou/deep-person-reid) - [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html)
+
+- 🔬 Algorithms:
+
+    - **DeepSORT**: Simple Online and Realtime Tracking with a Deep Association Metric ([paper](https://arxiv.org/abs/1703.07402) | [code](https://github.com/nwojke/deep_sort) | [code-realtime](https://github.com/levan92/deep_sort_realtime))
+
+    - **ADA-Track**: End-to-End Multi-Camera 3D Multi-Object Tracking ([paper](https://arxiv.org/pdf/2405.08909v1) | [code](https://github.com/dsx0511/ADA-Track))
