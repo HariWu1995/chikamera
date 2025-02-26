@@ -107,10 +107,12 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 - 🚀 Case studies:
     
     - [Multi-Camera Single-Object Tracking](https://github.com/arvganesh/Multi-Camera-Object-Tracking)
+    <img src="./assets/tracking_multi_cam_single_obj.png">
 
-    - [Multi-Camera Live-Object Tracking](https://github.com/LeonLok/Multi-Camera-Live-Object-Tracking)
+    - [Multi-Camera Live-Object Tracking](https://github.com/LeonLok/Multi-Camera-Live-Object-Tracking) (Traffic / Vehicle)
 
     - [Multi-Camera Multi-Target Tracking](https://github.com/nolanzzz/mtmct) (Game 3D)
+    <img src="./assets/tracking_multi_cam_multi_obj.png">
 
 - 🔬 Papers:
 
