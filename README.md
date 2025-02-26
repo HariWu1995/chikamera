@@ -25,6 +25,26 @@ combined with:
 
 Refering to the field of *computer vision*, **chikamera** means *thousands* of *scattered* and *intelligent* **cameras**, which provides *beautiful* *flowers* as **insights**.
 
+## 🧬 Fundamentals
+
+- Camera:
+
+    - [Camera Conventions](https://camtools.readthedocs.io/en/stable/camera.html)
+
+    - Camera Projections - [Extrinsic](https://ksimek.github.io/2012/08/22/extrinsic/) and [Intrinsic](https://ksimek.github.io/2013/08/13/intrinsic/)
+
+    - [Camera FoV](https://commonlands.com/pages/camera-field-of-view-calculator)
+
+- [Video Analytics](https://facit.ai/insights/video-analytics-guide) by [Facit.AI](https://facit.ai)
+
+    - [Smart Count](https://facit.ai/video-analytics-software/smart-count)
+
+    - [Smart Queue](https://facit.ai/video-analytics-software/smart-queue)
+
+    - [Smart Zone](https://facit.ai/video-analytics-software/smart-zone)
+
+    - [Trolley Analytics](https://facit.ai/video-analytics-software/smart-count/trolley-analytics)
+
 ## 🛢️ Datasets
 
 - Multi-Camera Trajectory Forecasting ([paper](https://arxiv.org/abs/2005.00282) | [repo](https://github.com/olly-styles/Multi-Camera-Trajectory-Forecasting))
@@ -84,26 +104,6 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 ## 🔎 Reference
 
-- 🧬 Fundamentals
-
-    - Camera:
-
-        - [Camera Conventions](https://camtools.readthedocs.io/en/stable/camera.html)
-
-        - Camera Projections - [Extrinsic](https://ksimek.github.io/2012/08/22/extrinsic/) and [Intrinsic](https://ksimek.github.io/2013/08/13/intrinsic/)
-
-        - [Camera FoV](https://commonlands.com/pages/camera-field-of-view-calculator)
-
-    - [Video Analytics](https://facit.ai/insights/video-analytics-guide) by [Facit.AI](https://facit.ai)
-
-        - [Smart Count](https://facit.ai/video-analytics-software/smart-count)
-
-        - [Smart Queue](https://facit.ai/video-analytics-software/smart-queue)
-
-        - [Smart Zone](https://facit.ai/video-analytics-software/smart-zone)
-
-        - [Trolley Analytics](https://facit.ai/video-analytics-software/smart-count/trolley-analytics)
-
 - 🚀 Case studies:
     
     - [Multi-Camera Single-Object Tracking](https://github.com/arvganesh/Multi-Camera-Object-Tracking)
@@ -114,17 +114,34 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
     - [Multi-Camera Multi-Target Tracking](https://github.com/nolanzzz/mtmct) (Game 3D)
     <img src="./assets/tracking_multi_cam_multi_obj.png">
 
-- 🔬 Papers:
+- ⚜️ Benchmark **Wildtrack**:
+
+    - **TrackTacular**: Lifting Multi-View Detection and Tracking to the Bird’s Eye View ([paper](https://arxiv.org/pdf/2403.12573v1) | [code](https://github.com/tteepe/TrackTacular))
+    <img src="./assets/camera_binocular_to_3d_voxel.png">
+
+    - **EarlyBird**: Early-Fusion for Multi-View Tracking in the Bird's Eye View ([paper](https://arxiv.org/pdf/2310.13350v1) | [code](https://github.com/tteepe/EarlyBird))
 
     - **ReST**: Reconfigurable Spatial-Temporal Graph Model for Multi-Camera Multi-Object Tracking ([paper](https://arxiv.org/pdf/2308.13229) | [code](https://github.com/chengche6230/ReST))
 
+- 🏆 Benchmark **MOT**(-17 | -20):
+
+    - **UCMCTrack**: Multi-Object Tracking with Uniform Camera Motion Compensation ([paper]() | [code](https://github.com/corfyi/ucmctrack))
+
+    - **CO-MOT** with *COLA* (COopetition Label Assignment) and *TALA* (Tracking Aware Label Assignment) ([paper](https://arxiv.org/pdf/2305.12724v1) | [code](https://github.com/BingfengYan/CO-MOT))
+
+    - **MOTIP**: Multi-Object Tracking as ID Prediction ([paper](https://arxiv.org/pdf/2403.16848v1) | [code](https://github.com/MCG-NJU/MOTIP))
+
     - **TrackFormer**: Multi-Object Tracking with Transformers ([paper](https://arxiv.org/pdf/2101.02702) | [code](https://github.com/timmeinhardt/trackformer))
 
-    - **ADA-Track**: End-to-End Multi-Camera 3D Multi-Object Tracking ([paper](https://arxiv.org/pdf/2405.08909v1) | [code](https://github.com/dsx0511/ADA-Track))
+    <details>
+
+    <summary>Less Relevant</summary>
 
     - **DeepSORT**: Simple Online and Realtime Tracking with a Deep Association Metric ([paper](https://arxiv.org/abs/1703.07402) | [code](https://github.com/nwojke/deep_sort) | [code-realtime](https://github.com/levan92/deep_sort_realtime))
 
-    - **Deep Person-ReID**: Omni-Scale Feature Learning for Person Re-Identification ([paper](https://arxiv.org/abs/1905.00953) | [code](https://github.com/KaiyangZhou/deep-person-reid) | [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html))
+    - **ADA-Track**: End-to-End Multi-Camera 3D Multi-Object Tracking ([paper](https://arxiv.org/pdf/2405.08909v1) | [code](https://github.com/dsx0511/ADA-Track))
+
+    </details> 
 
 - 🧮 Frameworks / Libraries:
 
@@ -133,3 +150,5 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
     - [Open3D](https://github.com/isl-org/Open3D) - [Visualization](https://www.open3d.org/docs/release/tutorial/visualization/visualization.html)
 
     - [Ultralytics](https://github.com/ultralytics/ultralytics)
+
+    - [TorchReID](https://github.com/KaiyangZhou/deep-person-reid) - [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html)
