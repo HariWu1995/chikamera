@@ -36,20 +36,51 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 - Multi-camera Multiple-People Tracking ([project](https://iccv2021-mmp.github.io/subpage/dataset.html) | [repo](https://github.com/damo-cv/MMP_Track1_ICCV21))
 
 - WILDTRACK Multi-Camera Person Dataset ([dataset](https://www.kaggle.com/datasets/aryashah2k/large-scale-multicamera-detection-dataset) | [repo](https://github.com/dataset-ninja/wildtrack))
+<img src="./assets/camera_layout_wildtrack.jpg">
 
 - EPFL-RLC Multi-Camera Dataset ([project](https://www.epfl.ch/labs/cvlab/data/data-rlc/))
 
-- MTA Multi Camera Track Auto (Game 3D) ([repo](https://github.com/schuar-iosb/mta-dataset))
+- (Game 3D) MTA Multi Camera Track Auto ([repo](https://github.com/schuar-iosb/mta-dataset))
 
 ## 👾 Models
 
 
 ## 🦾 Features 🦿
 
-✅  Camera Mesh Allocation
+✅ **Camera-Mesh Allocation**
     <img src="./assets/camera_grid_viz.png" width=500>
 
-⬜ ...
+⬜ **Projection**: Camera (Local) Pixel to Mesh (Global) Coordinate
+
+⬜ **Multi-Target Tracking**
+
+⬜ **Grouping Analysis** (individual / pair / group) using:
+
+  - ⬜ **Spatial Proximity** : distance between individuals
+
+  - ⬜ **Trajectory Similarity** : similarity in movement paths or in a coordinated manner (*speed* and *direction*)
+
+  - ⬜ **Temporal Consistency** : time thresholding to differentiate between accidental close encounters and intentional grouping
+
+  - ⬜ **Contextual Cues** : entry / exit patterns, or social interactions (with *facial* and *pose* features)
+
+⬜ **Insights**
+
+  - ⬜ **Traffic Flow** (movement patterns, common paths and trajectories, entry and exit usage, etc.)
+
+  - ⬜ **Bottleneck** & **Congestion** (blocked areas, pathway capacity vs. actual usage, real-time alert, block forecasting, etc.)
+
+  - ⬜ **Heatmap** & **Density** (highlight high-traffic zones, crowd density, peak-time periods for crowd accumulation, dead zones, etc.)
+
+  - ⬜ **Visitor Journey** (typical routes taken by visitors, sequence of booth visits and transition probabilities, etc.)
+
+  - ⬜ **Engagement** vs. **Dropout** (time-spent distribution on specific booth or area, zones where visitors linger, correlation between dwell time and booth attractiveness, etc.)
+
+  - ⬜ **Queue** & **Service Efficiency** (queue lengths at service points, waiting times and potential areas for process improvements, etc.)
+
+  - ⬜ **Spatial Behavior Patterns** (zones need layout adjustments, anomalous movement patterns, etc.)
+
+  - ⬜ **Operational & Strategic Advices** (real-time decisions on resource allocation, booth placements or event layout to optimize visitor flow, safety and emergency planning through real-time occupancy monitoring, etc.)
 
 ## 🔎 Reference
 
@@ -79,7 +110,7 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
     - [Multi-Camera Live-Object Tracking](https://github.com/LeonLok/Multi-Camera-Live-Object-Tracking)
 
-    - [Multi-Target Multi-Camera Tracking](https://github.com/nolanzzz/mtmct)
+    - [Multi-Camera Multi-Target Tracking](https://github.com/nolanzzz/mtmct) (Game 3D)
 
 - 🔬 Papers:
 
