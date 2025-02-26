@@ -64,23 +64,23 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
   - ⬜ **Contextual Cues** : entry / exit patterns, or social interactions (with *facial* and *pose* features)
 
-⬜ **Insights**
+## 🎬 Insights
 
-  - ⬜ **Traffic Flow** (movement patterns, common paths and trajectories, entry and exit usage, etc.)
+⬜ **Traffic Flow** (movement patterns, common paths and trajectories, entry and exit usage, etc.)
 
-  - ⬜ **Bottleneck** & **Congestion** (blocked areas, pathway capacity vs. actual usage, real-time alert, block forecasting, etc.)
+⬜ **Bottleneck** & **Congestion** (blocked areas, pathway capacity vs. actual usage, real-time alert, block forecasting, etc.)
 
-  - ⬜ **Heatmap** & **Density** (highlight high-traffic zones, crowd density, peak-time periods for crowd accumulation, dead zones, etc.)
+⬜ **Heatmap** & **Density** (highlight high-traffic zones, crowd density, peak-time periods for crowd accumulation, dead zones, etc.)
 
-  - ⬜ **Visitor Journey** (typical routes taken by visitors, sequence of booth visits and transition probabilities, etc.)
+⬜ **Visitor Journey** (typical routes taken by visitors, sequence of booth visits and transition probabilities, etc.)
 
-  - ⬜ **Engagement** vs. **Dropout** (time-spent distribution on specific booth or area, zones where visitors linger, correlation between dwell time and booth attractiveness, etc.)
+⬜ **Engagement** vs. **Dropout** (time-spent distribution on specific booth or area, zones where visitors linger, correlation between dwell time and booth attractiveness, etc.)
 
-  - ⬜ **Queue** & **Service Efficiency** (queue lengths at service points, waiting times and potential areas for process improvements, etc.)
+⬜ **Queue** & **Service Efficiency** (queue lengths at service points, waiting times and potential areas for process improvements, etc.)
 
-  - ⬜ **Spatial Behavior Patterns** (zones need layout adjustments, anomalous movement patterns, etc.)
+⬜ **Spatial Behavior Patterns** (zones need layout adjustments, anomalous movement patterns, etc.)
 
-  - ⬜ **Operational & Strategic Advices** (real-time decisions on resource allocation, booth placements or event layout to optimize visitor flow, safety and emergency planning through real-time occupancy monitoring, etc.)
+⬜ **Operational & Strategic Advices** (real-time decisions on resource allocation, booth placements or event layout to optimize visitor flow, safety and emergency planning through real-time occupancy monitoring, etc.)
 
 ## 🔎 Reference
 
