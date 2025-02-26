@@ -122,6 +122,10 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
     - **ADA-Track**: End-to-End Multi-Camera 3D Multi-Object Tracking ([paper](https://arxiv.org/pdf/2405.08909v1) | [code](https://github.com/dsx0511/ADA-Track))
 
+    - **DeepSORT**: Simple Online and Realtime Tracking with a Deep Association Metric ([paper](https://arxiv.org/abs/1703.07402) | [code](https://github.com/nwojke/deep_sort) | [code-realtime](https://github.com/levan92/deep_sort_realtime))
+
+    - **Deep Person-ReID**: Omni-Scale Feature Learning for Person Re-Identification ([paper](https://arxiv.org/abs/1905.00953) | [code](https://github.com/KaiyangZhou/deep-person-reid) | [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html))
+
 - 🧮 Frameworks / Libraries:
 
     - [CamTools](https://github.com/yxlao/camtools)
