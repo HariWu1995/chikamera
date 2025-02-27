@@ -84,7 +84,21 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
   - ⬜ **Contextual Cues** : entry / exit patterns, or social interactions (with *facial* and *pose* features)
 
+⬜ **Identity Recognition** and **Emotion Detection**
+
+  - ⬜ Face Recognition
+  
+  - ⬜ Age Estimation
+  
+  - ⬜ Gender Classification
+
+  - ⬜ Facial Expression / Emotion Detection
+  
+  - ⬜ Gaze Tracking (Attention)
+
 ## 🎬 Insights
+
+### 🏟️ **Venue** - for event organizer
 
 ⬜ **Traffic Flow** (movement patterns, common paths and trajectories, entry and exit usage, etc.)
 
@@ -101,6 +115,14 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 ⬜ **Spatial Behavior Patterns** (zones need layout adjustments, anomalous movement patterns, etc.)
 
 ⬜ **Operational & Strategic Advices** (real-time decisions on resource allocation, booth placements or event layout to optimize visitor flow, safety and emergency planning through real-time occupancy monitoring, etc.)
+
+### 📮 **Booth** - for booth owner
+
+⬜ **Demographic Profiling** (basic info (age, gender) to tailor event offerings and marketing strategies)
+
+⬜ **Emotion Response** and **Sentiment Analysis**
+
+⬜ **Visual Attraction** and **Product-Display Effectiveness** and **Distraction Trigger**
 
 ## 🏆 Benchmark
 
