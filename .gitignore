@@ -1,6 +1,6 @@
 # Local folders
 venv/
-datasets/
+data/
 checkpoints/
 
 # Byte-compiled / optimized / DLL files

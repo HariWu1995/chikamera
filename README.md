@@ -70,9 +70,6 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 </details>
 
-## 👾 Models
-
-
 ## 🦾 Features 🦿
 
 ✅ **Camera-Mesh Allocation**: Multi-Camera Allocation with Overlapped Field-of-View
