@@ -70,7 +70,9 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 ✅ **Camera-Mesh Allocation**
     <img src="./assets/camera_grid_viz.png" width=500>
 
-⬜ **Projection**: Camera (Local) Pixel to Mesh (Global) Coordinate
+⬜ **Camera Calibration**: Camera Self-Location in a Multi-Camera Mesh-System
+
+⬜ **Camera Projection**: Camera (Local) Pixel to Mesh (Global) Coordinate
 
 ⬜ **Multi-Target Tracking**
 
