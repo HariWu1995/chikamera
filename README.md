@@ -47,28 +47,37 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 ## 🛢️ Datasets
 
-- Multi-Camera Trajectory Forecasting ([paper](https://arxiv.org/abs/2005.00282) | [repo](https://github.com/olly-styles/Multi-Camera-Trajectory-Forecasting))
-<img src="./assets/camera_layout_WNMF.jpg">
+- **Wildtrack**: Multi-Camera Person Dataset ([dataset](https://www.kaggle.com/datasets/aryashah2k/large-scale-multicamera-detection-dataset) | [repo](https://github.com/dataset-ninja/wildtrack) | [Toolkit](https://github.com/Chavdarova/WILDTRACK-toolkit) | [Leaderboard](https://paperswithcode.com/sota/multi-object-tracking-on-wildtrack))
+<img src="./assets/camera_layout_wildtrack.jpg">
+
+- **MultiviewX**: Multi-View Synthetic Pedestrian Detection ([dataset](https://1drv.ms/u/s!AtzsQybTubHfhYZ9Ghhahbp20OX9kA?e=Hm9Xdg) | [Toolkit](https://github.com/hou-yz/MultiviewX) | [Leaderboard](https://paperswithcode.com/sota/multiview-detection-on-multiviewx))
+<img src="./assets/camera_layout_multiviewx.gif">
 
 - i.c.sens Multi-View Pedestrian-Tracking Dataset ([dataset](https://service.tib.eu/ldmservice/vdataset/luh-multi-view-pedestrian-tracking))
 <img src="./assets/camera_layout_icSens.jpg">
 
-- Multi-camera Multiple-People Tracking ([project](https://iccv2021-mmp.github.io/subpage/dataset.html) | [repo](https://github.com/damo-cv/MMP_Track1_ICCV21))
+<details>
+<summary>Click for More</summary>
 
-- WILDTRACK Multi-Camera Person Dataset ([dataset](https://www.kaggle.com/datasets/aryashah2k/large-scale-multicamera-detection-dataset) | [repo](https://github.com/dataset-ninja/wildtrack))
-<img src="./assets/camera_layout_wildtrack.jpg">
+- Multi-Camera Trajectory Forecasting ([paper](https://arxiv.org/abs/2005.00282) | [repo](https://github.com/olly-styles/Multi-Camera-Trajectory-Forecasting))
+<img src="./assets/camera_layout_WNMF.jpg">
+
+- Multi-camera Multiple-People Tracking ([project](https://iccv2021-mmp.github.io/subpage/dataset.html) | [repo](https://github.com/damo-cv/MMP_Track1_ICCV21))
 
 - EPFL-RLC Multi-Camera Dataset ([project](https://www.epfl.ch/labs/cvlab/data/data-rlc/))
 
 - (Game 3D) MTA Multi Camera Track Auto ([repo](https://github.com/schuar-iosb/mta-dataset))
+
+</details>
 
 ## 👾 Models
 
 
 ## 🦾 Features 🦿
 
-✅ **Camera-Mesh Allocation**
-    <img src="./assets/camera_grid_viz.png" width=500>
+✅ **Camera-Mesh Allocation**: Multi-Camera Allocation with Overlapped Field-of-View
+
+<img src="./assets/camera_grid_viz.png" width=500>
 
 ⬜ **Camera Calibration**: Camera Self-Location in a Multi-Camera Mesh-System
 
@@ -130,7 +139,7 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 - **Wildtrack**:
 
-    - **TrackTacular**: Lifting Multi-View Detection and Tracking to the Bird’s Eye View ([paper](https://arxiv.org/pdf/2403.12573v1) | [code](https://github.com/tteepe/TrackTacular))
+    - **TrackTacular**: Lifting Multi-View Detection and Tracking to the Bird’s Eye View ([paper](https://arxiv.org/pdf/2403.12573v1) | [code](https://github.com/tteepe/TrackTacular) | [Model zoo](https://github.com/tteepe/TrackTacular/releases))
     <img src="./assets/camera_binocular_to_3d_voxel.png">
 
     - **EarlyBird**: Early-Fusion for Multi-View Tracking in the Bird's Eye View ([paper](https://arxiv.org/pdf/2310.13350v1) | [code](https://github.com/tteepe/EarlyBird))
