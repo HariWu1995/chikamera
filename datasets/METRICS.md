@@ -4,16 +4,8 @@
 
 <img src="../assets/metrics_comparison_MOT.png" width=512>
 
-## 📐 Detection
 
-### 📏 MODA - Multi-Object Detection Accuracy
-
-### 📏 MODP - Multi-Object Detection Precision
-
-
-## 🔎 Tracking
-
-### 🎯 MOTA - Multi-Object Tracking Accuracy
+## 🔎 MOTA - Multi-Object Tracking Accuracy
 
 MOTA introduces the concept of **identity tracking** to object detection metrics. 
 
@@ -33,7 +25,7 @@ While MOTA’s simplicity is appealing, it has some limitations:
 
 3. **IoU threshold is fixed** so more or less detection accuracy is not reflected on the metric
 
-### 🎯 IDF1 - Identification F1-score
+## 🎯 IDF1 - Identification F1-score
 
 IDF1 addresses some of MOTA’s limitations by focusing on **how long the tracker correctly identifies an object**, rather than just counting errors. It’s based on the concept of **Identification Precision** (IDP) and **Identification Recall** (IDR).
 
@@ -56,7 +48,7 @@ However, IDF1 also has limitations:
 
 2. **IoU threshold is fixed** so more or less detection accuracy is not reflected on the metric
 
-### 🎯 HOTA - Higher-Order Tracking Accuracy
+## 🔎 HOTA - Higher-Order Tracking Accuracy
 
 HOTA is a more recent metric designed to address the limitations of both MOTA and IDF1. 
 
@@ -96,4 +88,8 @@ HOTA drawbacks:
 
 ## 📊 Others
 
+### Multi-Object Detection
 
+- **MODA** - Multi-Object Detection Accuracy
+
+- **MODP** - Multi-Object Detection Precision
