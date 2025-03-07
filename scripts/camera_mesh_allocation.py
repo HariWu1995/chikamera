@@ -35,7 +35,8 @@ def test_uniform(h_size, v_size):
     image_plane_sz = round(image_plane_sz)
     print("Image Plane Size:", image_plane_sz)
 
-    grid_cameras = init_uniform(h_size, v_size, image_plane_sz)
+    grid_distance = image_plane_sz
+    grid_cameras = init_uniform(h_size, v_size, grid_distance)
     print("Grid Camera Locations:", grid_cameras)
 
     return grid_cameras
@@ -52,7 +53,9 @@ def test_uniform_hv(h_size, v_size):
     print("Image Plane h-Size:", image_plane_h)
     print("Image Plane v-Size:", image_plane_v)
 
-    grid_cameras = init_uniform(h_size, v_size, image_plane_h, image_plane_v)
+    h_distance = int(image_plane_h * 1.19)
+    v_distance = int(image_plane_v * 1.69)
+    grid_cameras = init_uniform(h_size, v_size, h_distance, v_distance)
     print("Grid Camera Locations:", grid_cameras)
 
     return grid_cameras
@@ -87,9 +90,9 @@ if __name__ == "__main__":
 
     # Camera Extrinsic -> Mesh
     H = CAMERA_HEIGHT
+    t = CAMERA_ANGLE
     Ts = [
-        compute_extrinsic_matrix(tuple(list(p) + [H]), CAMERA_ANGLE) 
-                                        for p in grid_cameras
+        compute_extrinsic_matrix(tuple(list(p) + [H]), t) for p in grid_cameras
     ]
 
     print('-' * 11)

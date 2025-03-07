@@ -1,6 +1,7 @@
-import numpy as np
-from scipy.optimize import linear_sum_assignment
 import math
+import numpy as np
+
+from scipy.optimize import linear_sum_assignment
 
 
 def getDistance(x1, y1, x2, y2):
@@ -9,9 +10,12 @@ def getDistance(x1, y1, x2, y2):
 
 def CLEAR_MOD_HUN(gt, det):
     """
-    @param gt: the ground truth result matrix
-    @param det: the detection result matrix
-    @return: MODA, MODP, recall, precision
+    @param 
+        gt: the ground truth result matrix
+        det: the detection result matrix
+
+    @return: 
+        MODA, MODP, recall, precision
 
     compute CLEAR Detection metrics according to
     PERFORMANCE EVALUATION PROTOCOL FOR FACE, PERSON AND
@@ -21,10 +25,10 @@ def CLEAR_MOD_HUN(gt, det):
     Submitted to Advanced Research and Development Activity
 
     metrics contains the following
-    [1]   recall	- recall = percentage of detected targets
+    [1]   recall	- recall    = percentage of           detected targets
     [2]   precision	- precision = percentage of correctly detected targets
-    [3]	MODA          - N-MODA
-    [4]	MODP          - N-MODP
+    [3]	    MODA    - N-MODA
+    [4]	    MODP    - N-MODP
     """
     td = 50 / 2.5  # distance threshold
 

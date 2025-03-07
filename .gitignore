@@ -1,6 +1,8 @@
 # Local folders
 venv/
-data/
+datasets/ICSens/
+datasets/Wildtrack/
+datasets/MultiviewX/
 checkpoints/
 
 # Byte-compiled / optimized / DLL files

@@ -56,6 +56,8 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 - i.c.sens Multi-View Pedestrian-Tracking Dataset ([dataset](https://service.tib.eu/ldmservice/vdataset/luh-multi-view-pedestrian-tracking))
 <img src="./assets/camera_layout_icSens.jpg">
 
+- **CroHD**: Crowd of Heads Dataset ([dataset](https://www.crowdhuman.org/download.html) | [Leaderboard](https://paperswithcode.com/sota/multiple-object-tracking-on-crohd))
+
 <details>
 <summary>Click for More</summary>
 
@@ -80,7 +82,9 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 ⬜ **Camera Projection**: Camera (Local) Pixel to Mesh (Global) Coordinate
 
-⬜ **Multi-Target Tracking**
+⬜ **Multi-Target Tracking**:
+  
+  - ⬜ Person Re-Identification ([paper](https://arxiv.org/pdf/1905.00953) - [repo](https://github.com/KaiyangZhou/deep-person-reid) - [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html))
 
 ⬜ **Grouping Analysis** (individual / pair / group) using:
 
@@ -92,16 +96,16 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
   - ⬜ **Contextual Cues** : entry / exit patterns, or social interactions (with *facial* and *pose* features)
 
-⬜ **Identity Recognition** and **Emotion Detection**
+⬜ **Identity** and **Emotion** Analysis
 
   - ⬜ Face Recognition
+  
+  - ⬜ Facial Expression / Emotion Detection
   
   - ⬜ Age Estimation
   
   - ⬜ Gender Classification
 
-  - ⬜ Facial Expression / Emotion Detection
-  
   - ⬜ Gaze Tracking (Attention)
 
 ## 🎬 Insights
@@ -165,15 +169,17 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
     - [Multi-Camera Multi-Target Tracking](https://github.com/nolanzzz/mtmct) (Game 3D)
     <img src="./assets/tracking_multi_cam_multi_obj.png">
 
+    - [Multi-Camera Rasp Pi Video Streaming](https://github.com/jeffbass/imagezmq/blob/master/docs/more-details.rst)
+
 - 🧮 Frameworks / Libraries:
 
     - [CamTools](https://github.com/yxlao/camtools)
 
+    - [imageZMQ](https://github.com/jeffbass/imagezmq)
+
     - [Open3D](https://github.com/isl-org/Open3D) - [Visualization](https://www.open3d.org/docs/release/tutorial/visualization/visualization.html)
 
     - [Ultralytics](https://github.com/ultralytics/ultralytics)
-
-    - [TorchReID](https://github.com/KaiyangZhou/deep-person-reid) - [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html)
 
 - 🔬 Algorithms:
 

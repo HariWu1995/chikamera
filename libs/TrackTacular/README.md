@@ -18,7 +18,7 @@ Gerhard Rigoll
 > This work is an extension of your previous work [EarlyBird  🦅](https://github.com/tteepe/EarlyBird).
 > Feel free to check it out and extend our multi-view object detection and tracking pipeline on other datasets!
 
-![Overview](imgs/overview.svg)
+![Overview](./overview.svg)
 
 ## Usage
 

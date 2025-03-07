@@ -15,7 +15,7 @@ This results in over **40 000 bounding boxes** delimiting every person present i
 - **Download**: [Kaggle](https://www.kaggle.com/datasets/aryashah2k/large-scale-multicamera-detection-dataset) | [Supervisely](https://assets.supervisely.com/remote/eyJsaW5rIjogImZzOi8vYXNzZXRzLzM0OTJfV2lsZHRyYWNrL3dpbGR0cmFjay1EYXRhc2V0TmluamEudGFyIiwgInNpZyI6ICJISitvTzE5ME92ODM3NW9WRGFuOE4wUEU4SVJqUG1FLzVRSm9ZNDFhRmxzPSJ9) | [CVLab](http://documents.epfl.ch/groups/c/cv/cvlab-unit/www/data/Wildtrack/Wildtrack_dataset_full.zip)
 
 - **Camera Setup**:
-<img src="../../assets/camera_layout_wildtrack.jpg">
+<img src="../assets/camera_layout_wildtrack.jpg">
 
 ## 🗄️ MultiviewX
 
@@ -32,7 +32,7 @@ There are **6 cameras** with **overlapping field-of-view**, each of which output
 - **Download**: [dataset](https://1drv.ms/u/s!AtzsQybTubHfhYZ9Ghhahbp20OX9kA?e=Hm9Xdg)
 
 - **Demo**:
-<img src="../../assets/camera_layout_multiviewx.gif">
+<img src="../assets/camera_layout_multiviewx.gif">
 
 ## 🛢 i.c.sens
 
@@ -47,12 +47,22 @@ The **identity number** of a pedestrian is unique and identical across viewpoint
 - **Download**: [dataset](https://service.tib.eu/ldmservice/vdataset/luh-multi-view-pedestrian-tracking)
 
 - **Camera Setup**:
-<img src="../../assets/camera_layout_icSens.jpg">
+<img src="../assets/camera_layout_icSens.jpg">
+
+## 👨‍👩‍👧‍👦 CrowdHuman
+
+CrowdHuman is a benchmark dataset to better evaluate detectors in **crowd scenarios**. The dataset is large, **rich-annotated** and contains **high diversity**. 
+
+CrowdHuman contains 15000, 4370 and 5000 images for training, validation, and testing, respectively. There are a total of **470K human instances** from train and validation subsets and **23 persons per image**, with various kinds of occlusions in the dataset. 
+
+Each human instance is annotated with a **head bounding-box**, **human visible-region bounding-box** and **human full-body bounding-box**.
+
+- **Download**: [page](https://www.crowdhuman.org/download.html)
 
 ## ⛁ Others
 
 - Multi-Camera Trajectory Forecasting ([paper](https://arxiv.org/abs/2005.00282) | [repo](https://github.com/olly-styles/Multi-Camera-Trajectory-Forecasting))
-<img src="./assets/camera_layout_WNMF.jpg">
+<img src="../assets/camera_layout_WNMF.jpg">
 
 - Multi-camera Multiple-People Tracking ([project](https://iccv2021-mmp.github.io/subpage/dataset.html) | [repo](https://github.com/damo-cv/MMP_Track1_ICCV21))
 
