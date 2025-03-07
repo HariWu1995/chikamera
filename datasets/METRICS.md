@@ -88,8 +88,8 @@ HOTA drawbacks:
 
 ## 📊 Others
 
-### Multi-Object Detection
+### 📐 Multi-Object Detection
 
-- **MODA** - Multi-Object Detection Accuracy
+- 📏 **MODA** - Multi-Object Detection Accuracy
 
-- **MODP** - Multi-Object Detection Precision
+- 📏 **MODP** - Multi-Object Detection Precision
