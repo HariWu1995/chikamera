@@ -62,7 +62,7 @@ Each human instance is annotated with a **head bounding-box**, **human visible-r
 ## ⛁ Others
 
 - Multi-Camera Trajectory Forecasting ([paper](https://arxiv.org/abs/2005.00282) | [repo](https://github.com/olly-styles/Multi-Camera-Trajectory-Forecasting))
-<img src="../assets/camera_layout_WNMF.jpg">
+<img src="../assets/camera_layout_WNMF.jpg" width=512>
 
 - Multi-camera Multiple-People Tracking ([project](https://iccv2021-mmp.github.io/subpage/dataset.html) | [repo](https://github.com/damo-cv/MMP_Track1_ICCV21))
 
