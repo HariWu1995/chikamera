@@ -2,7 +2,7 @@
 
 [Reference](https://miguel-mendez-ai.com/2024/08/25/mot-tracking-metrics)
 
-<img src="../assets/metrics_comparison_MOT.png" width=768>
+<img src="../assets/metrics_comparison_MOT.png" width=512>
 
 ## 📐 Detection
 
@@ -23,7 +23,7 @@ It incorporates **identity switches** (IDSW), which occur when a single ground t
 
 The computation of MOTA involves **temporal dependency**, penalizing **track assignment changes** between consecutive frames. 
 
-<img src="../assets/metrics_MOTA.png" width=512>
+<img src="../assets/metrics_MOTA.png" width=768>
 
 While MOTA’s simplicity is appealing, it has some limitations:
 
@@ -39,8 +39,8 @@ IDF1 addresses some of MOTA’s limitations by focusing on **how long the tracke
 
 It computes the assignment between prediction and ground truth objects **across the entire video**, rather than frame by frame.
 
-<img src="../assets/metrics_IDF1.png" width=512>
-<img src="../assets/metrics_IDF1_viz.png" width=768>
+<img src="../assets/metrics_IDF1.png" width=768>
+<img src="../assets/metrics_IDF1_viz.png" width=512>
 
 Key advantages of IDF1:
 
@@ -69,10 +69,10 @@ HOTA can be broken down into **DetA** (Detection Accuracy) and **AssA** (Associa
 <summary> About DetA and AssA </summary>
 
 - **Detection Accuracy** (DetA) measures how well a tracker localizes **objects in each frame**, typically using Intersection over Union (IoU) thresholds. It essentially quantifies the **spatial accuracy of detections**.
-- <img src="../assets/metrics_detA.png" width=512>
+- <img src="../assets/metrics_detA.png" width=768>
 
 - **Association Accuracy** (AssA) evaluates how accurately a tracker maintains **object identities across frames**. It focuses on the **temporal consistency of ID assignments**, measuring how well the tracker links detections of the same object over time.
-- <img src="../assets/metrics_assA.png" width=512>
+- <img src="../assets/metrics_assA.png" width=768>
 
 </details>
 
@@ -84,7 +84,7 @@ HOTA can be broken down into **DetA** (Detection Accuracy) and **AssA** (Associa
 
 </details>
 
-<img src="../assets/metrics_HOTA.png" width=512>
+<img src="../assets/metrics_HOTA.png" width=768>
 
 HOTA uses **global alignment** (high-order association) between predicted and ground truth detections, similar to IDF1, but also incorporates **localization accuracy**. In other word, HOTA evaluates both the ability to detect objects accurately and to maintain correct associations over time.
 
