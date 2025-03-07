@@ -4,6 +4,9 @@
 
 <img src="../assets/metrics_comparison_MOT.png" width=512>
 
+[MOTMetrics](https://github.com/cheind/py-motmetrics)
+
+<img src="../assets/lib_motmetrics.png" width=768>
 
 ## 🔎 MOTA - Multi-Object Tracking Accuracy
 

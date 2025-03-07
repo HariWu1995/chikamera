@@ -2,16 +2,18 @@ import math
 
 import torch
 import torch.nn as nn
-import torchvision
+from torchvision import models
 
-from models.encoder import freeze_bn, UpsamplingConcat
+from .base import freeze_bn, UpsamplingConcat
 
 
 class Decoder(nn.Module):
-    def __init__(self, in_channels, n_classes, feat2d=128):
+
+    def __init__(self, in_channels: int, n_classes: int, feat2d: int = 128):
         super().__init__()
-        backbone = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.DEFAULT)
+        backbone = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         freeze_bn(backbone)
+
         self.first_conv = nn.Conv2d(in_channels, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = backbone.bn1
         self.relu = backbone.relu
@@ -117,4 +119,7 @@ class Decoder(nn.Module):
         for name, head in self.img_heads.items():
             out_img[f'img_{name}'] = head(feat_cams)
 
-        return {**out_bev, **out_img}
+        return {
+            **out_bev, 
+            **out_img,
+        }
