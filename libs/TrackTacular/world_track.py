@@ -1,3 +1,6 @@
+import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
+
 import os.path as osp
 
 import matplotlib.pyplot as plt
@@ -422,6 +425,12 @@ if __name__ == '__main__':
     cli = TrackLightningCLI(model_class=WorldTrackModel)
 
     """
+    Train: GPU > 10.6 Gb
+        python -m libs.TrackTacular.world_track fit \
+            -c libs/TrackTacular/configs/trainer_fit.yml \
+            -c libs/TrackTacular/configs/dataset_{multiviewx,wildtrack,synthehicle}.yml \
+            -c libs/TrackTacular/configs/model_{mvdet,segnet,liftnet,bevformer}.yml
+    
     Test:
         python -m libs.TrackTacular.world_track test \
                 -c "./checkpoints/TrackTacular/mvx_liftnet/config.yaml" \

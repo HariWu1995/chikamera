@@ -1,8 +1,10 @@
 data:
-  class_path: datasets.dataloaders.PedestrianDataLoader
+  class_path: libs.TrackTacular.datasets.dataloaders.PedestrianDataLoader
   init_args:
-    data_dir: "C:/Users/Mr. RIAH/Documents/Projects/chikamera/datasets/MultiviewX"
+    data_dir: "F:/__Datasets__/MultiviewX"
     data_type: multiviewx
+    batch_size: 1
+    num_workers: 1
 model:
   resolution: [160, 2, 250]  # Y,Z,X
   bounds: [0, 1000, 0, 640, 0, 2]  # xmin,xmax,ymin,ymax,zmin,zmax

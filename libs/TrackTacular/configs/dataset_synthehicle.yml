@@ -1,7 +1,9 @@
 data:
-  class_path: datasets.dataloaders.VehicleDataLoader
+  class_path: libs.TrackTacular.datasets.dataloaders.VehicleDataLoader
   init_args:
     data_dir: "/usr/home/tee/Developer/datasets/synthehicle"
+    batch_size: 2
+    num_workers: 4
 model:
   resolution: [150, 4, 150]  # Y,Z,X
   bounds: [-75, 75, -75, 75, 0, 2]  # xmin,xmax,ymin,ymax,zmin,zmax
