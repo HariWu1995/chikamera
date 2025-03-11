@@ -9,7 +9,7 @@ import torch
 import torch.nn.functional as F
 
 from .loss import FocalLoss, compute_rot_loss
-from .models import Segnet, MVDet, Liftnet, Bevformernet
+from .models import Segnet, MVDet, Liftnet, Bevformer
 from .utils.vox import VoxelUtil
 from .utils.misc import pack_seqdim, reduce_masked_mean, sigmoid
 from .utils.pproc import postprocess
@@ -87,7 +87,7 @@ class WorldTrackModel(pl.LightningModule):
 
         elif model_name == 'bevformer':
             del model_config['num_cameras']
-            self.model = Bevformernet(**model_config)
+            self.model = Bevformer(**model_config)
 
         elif model_name == 'mvdet':
             del model_config['z_sign']
@@ -333,7 +333,7 @@ class WorldTrackModel(pl.LightningModule):
             ])
 
     def on_test_epoch_end(self):
-        log_dir = self.trainer.log_dir if self.trainer.log_dir is not None else '../data/cache'
+        log_dir = self.trainer.log_dir if self.trainer.log_dir is not None else './cache'
 
         # detection
         pred_path = osp.join(log_dir, 'moda_pred.txt')
@@ -404,16 +404,28 @@ class WorldTrackModel(pl.LightningModule):
 
 if __name__ == '__main__':
 
+    # Reference: 
+    #   https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.cli.LightningCLI.html
+    #   https://www.restack.io/p/pytorch-lightning-answer-cli-example-cat-ai
+
     from lightning.pytorch.cli import LightningCLI
 
     torch.set_float32_matmul_precision('medium')
 
-    class MyLightningCLI(LightningCLI):
+    class TrackLightningCLI(LightningCLI):
 
         def add_arguments_to_parser(self, parser):
-            parser.link_arguments("model.resolution", "data.init_args.resolution")
             parser.link_arguments("model.bounds", "data.init_args.bounds")
+            parser.link_arguments("model.resolution", "data.init_args.resolution")
             parser.link_arguments("trainer.accumulate_grad_batches", "data.init_args.accumulate_grad_batches")
 
-    cli = MyLightningCLI(WorldTrackModel)
+    cli = TrackLightningCLI(model_class=WorldTrackModel)
+
+    """
+    Test:
+        python -m libs.TrackTacular.world_track test \
+                -c "./checkpoints/TrackTacular/mvx_liftnet/config.yaml" \
+            --ckpt "./checkpoints/TrackTacular/mvx_liftnet/model.ckpt" \
+            --data.batch_size 1
+    """
 

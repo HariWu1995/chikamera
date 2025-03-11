@@ -1,12 +1,11 @@
 import math
 
-from src.utils.floorplan import generate_space_grid
 from src.camera.projection import calculate_image_plane, calculate_image_plane_hv, \
                                 compute_intrinsic_matrix, compute_extrinsic_matrix
 from src.camera.visualization import create_camera_frustums, visualize_camera_mesh
 
-from src.algorithms.naive import init_greedy, init_uniform
-from src.algorithms.probabilistic import simulated_annealing as optimize
+from .floorplan import generate_space_grid
+from .algorithms import init_greedy, init_uniform, simulated_annealing as optimize
 
 
 # Camera Properties
@@ -27,9 +26,9 @@ FX = 6.4
 FY = 4.8
 
 
-def test_uniform(h_size, v_size):
+def generate_mesh_uniform(h_size, v_size):
     print('-' * 11)
-    print('Test uniform distribution ...')
+    print('Mesh with uniform distribution ...')
 
     image_plane_sz = calculate_image_plane(CAMERA_HEIGHT, CAMERA_HFOV)
     image_plane_sz = round(image_plane_sz)
@@ -42,9 +41,9 @@ def test_uniform(h_size, v_size):
     return grid_cameras
 
 
-def test_uniform_hv(h_size, v_size):
+def generate_mesh_uniform_hv(h_size, v_size):
     print('-' * 11)
-    print('Test uniform distribution with hFoV != vFoV...')
+    print('Mesh with uniform distribution with hFoV != vFoV...')
 
     image_plane_h, \
     image_plane_v = calculate_image_plane_hv(CAMERA_HEIGHT, CAMERA_HFOV, CAMERA_VFOV)
@@ -61,9 +60,9 @@ def test_uniform_hv(h_size, v_size):
     return grid_cameras
 
 
-def test_greedy(grid, num_cameras: int):
+def generate_mesh_greedy(grid, num_cameras: int):
     print('-' * 11)
-    print('Test greedy-and-optimize distribution ...')
+    print('Mesh with greedy-and-optimize distribution ...')
 
     image_plane_sz = calculate_image_plane(CAMERA_HEIGHT, CAMERA_HFOV)
     image_plane_sz = round(image_plane_sz)
@@ -84,9 +83,9 @@ if __name__ == "__main__":
     grid = generate_space_grid(h_size, v_size)
 
     # Tests
-    # grid_cameras = test_greedy(grid, num_cameras=10)
-    # grid_cameras = test_uniform(h_size, v_size)
-    grid_cameras = test_uniform_hv(h_size, v_size)
+    # grid_cameras = generate_mesh_greedy(grid, num_cameras=10)
+    # grid_cameras = generate_mesh_uniform(h_size, v_size)
+    grid_cameras = generate_mesh_uniform_hv(h_size, v_size)
 
     # Camera Extrinsic -> Mesh
     H = CAMERA_HEIGHT

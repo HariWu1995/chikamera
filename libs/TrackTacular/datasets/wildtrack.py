@@ -40,7 +40,7 @@ class Wildtrack(VisionDataset):
         self.frame_step = 5
 
         # world x,y actually means i,j in Wildtrack, which correspond to h,w
-        self.worldcoord_from_worldgrid_mat = np.array(worldcoord_from_worldgrid_matrix)
+        self.worldcoord_from_worldgrid_matrix = np.array(worldcoord_from_worldgrid_matrix)
 
         self.intrinsic_matrices, \
         self.extrinsic_matrices = zip(*[self.get_intrinsic_extrinsic_matrix(cam) 

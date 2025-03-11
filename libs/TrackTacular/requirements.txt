@@ -1,16 +1,17 @@
-kornia==0.6.11
-matplotlib==3.7.1
-opencv-python==4.7.0.72
+# Check CUDA (12.4) and PyTorch (2.5.1) version
+mmcv-full==1.7.1 -f https://download.openmmlab.com/mmcv/dist/12.4/2.5.1/index.html 
 lightning[extra]==2.0.2
+efficientnet_pytorch
+pytorch_metric_learning==2.2.0
+motmetrics==1.4.0
+kornia==0.6.11
+Pillow==9.5.0
+opencv-python==4.7.0.72
+numpy==1.24.2
 scipy==1.10.1
 einops==0.6.1
-nuscenes-devkit==1.1.10
-numpy==1.24.2
-lap==0.4.0
-motmetrics==1.4.0
-Pillow==9.5.0
-pytorch_metric_learning==2.2.0
-mmcv==2.0.0
-efficientnet_pytorch
 timm==0.9.2
 imgaug==0.4.0
+git+https://github.com/gatagat/lap.git
+# lap==0.4.0
+# nuscenes-devkit==1.1.10

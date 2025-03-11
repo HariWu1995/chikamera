@@ -10,8 +10,8 @@ from ..utils.misc3d import gridcloud3d
 from ..utils.conversion import camera2pixels
 
 
-# no radar/lidar integration
-class Bevformernet(nn.Module):
+# no radar / lidar integration
+class Bevformer(nn.Module):
 
     def __init__(self, Y, Z, X,
                  rand_flip: bool = False,
@@ -21,7 +21,7 @@ class Bevformernet(nn.Module):
                      z_sign: int = 1,
                encoder_type: str = 'swin_t',
         ):
-        super(Bevformernet, self).__init__()
+        super(Bevformer, self).__init__()
 
         assert (encoder_type in ['res101','res50','res34','res18','effb0','effb4','swin_t']), \
             f'encoder_type = {encoder_type} is not supported!'
@@ -112,7 +112,7 @@ class Bevformernet(nn.Module):
         assert (C == 3)
 
         B0 = B * S
-        device = rgb_cams_.device
+        device = rgb_cams.device
 
         # reshape tensors
         __p = lambda x:   pack_seqdim(x, B)

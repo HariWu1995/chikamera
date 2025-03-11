@@ -1,6 +1,6 @@
 import torch
 
-from src.utils.misc import pack_seqdim, unpack_seqdim, matmul2, eye_4x4, apply_4x4
+from .misc import pack_seqdim, unpack_seqdim, matmul2, eye_4x4, apply_4x4
 
 
 # parallel version

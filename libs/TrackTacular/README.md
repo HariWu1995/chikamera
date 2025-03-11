@@ -45,7 +45,7 @@ python world_track.py fit -c configs/t_fit.yml \
 ### Testing
 ```shell
 python world_track.py test -c model_weights/config.yaml \
-    --ckpt model_weights/model-epoch=35-val_loss=6.50.ckpt
+    --ckpt model_weights/model-epoch=35-val_loss=6.50.ckpt --data.batch_size 1
 ```
 
 ## Acknowledgement

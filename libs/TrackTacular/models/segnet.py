@@ -108,7 +108,7 @@ class Segnet(nn.Module):
              ref_T_global: (B,4,4)
                  vox_util: vox util object
         """
-        device = rgb_cams_.device
+        device = rgb_cams.device
         B, S, C, H, W = rgb_cams.shape
         assert (C == 3)
 

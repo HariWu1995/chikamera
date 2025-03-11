@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from .ms_deform_attn import MSDeformAttn, MSDeformAttn3D
+from .attn_ms import MSDeformAttn, MSDeformAttn3D
 
 
 class VanillaSelfAttention(nn.Module):
@@ -101,8 +101,8 @@ class SpatialCrossAttention(nn.Module):
         for j in range(B):
             for i, ref_pts in enumerate(ref_pts_cam):
                 index_query = bev_mask[i, j].sum(-1).nonzero().squeeze(-1)
-                queries_rebatch[   j, i, :len(index_query)] =   query[j, index_query]
-                ref_points_rebatch[j, i, :len(index_query)] = ref_pts[j, index_query]
+                queries_rebatch[j, i, :len(index_query)] =   query[j, index_query]
+                ref_pts_rebatch[j, i, :len(index_query)] = ref_pts[j, index_query]
 
         # take feature map as key and value of attention module
         key   =   key.permute(2, 0, 1, 3).reshape(B * S, M, C)
@@ -110,14 +110,14 @@ class SpatialCrossAttention(nn.Module):
 
         level_start_index = query.new_zeros([1, ]).long()
 
-        ref_points_rebatch = ref_points_rebatch.view(B * S, max_len, D, 2)
-        # ref_points_rebatch = torch.mean(ref_points_rebatch, dim=-2, keepdim=True)
+        ref_pts_rebatch = ref_pts_rebatch.view(B * S, max_len, D, 2)
+        # ref_pts_rebatch = torch.mean(ref_pts_rebatch, dim=-2, keepdim=True)
         
         queries = self.deformable_attention(
                         query = queries_rebatch.view(B * S, max_len, self.dim),
                           key = key,
                         value = value,
-             reference_points = ref_points_rebatch,
+             reference_points = ref_pts_rebatch,
                spatial_shapes = spatial_shapes,
             level_start_index = level_start_index).view(B, S, max_len, self.dim)
 

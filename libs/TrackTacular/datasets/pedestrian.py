@@ -106,8 +106,9 @@ class PedestrianDataset(VisionDataset):
 
             for person in all_persons:
                 def is_in_cam(cam):
-                    return not (person['views'][cam]['xmin'] == -1 \                                single_pedestrian['views'][cam]['xmax'] == -1 and
-                            and person['views'][cam]['ymin'] == -1 \                                single_pedestrian['views'][cam]['xmax'] == -1 and
+                    return not (person['views'][cam]['xmin'] == -1 \
+                            and person['views'][cam]['xmax'] == -1 \
+                            and person['views'][cam]['ymin'] == -1 \
                             and person['views'][cam]['ymax'] == -1)
                 in_cam_range = sum(is_in_cam(cam) for cam in range(self.num_cam))
                 if not in_cam_range:
@@ -221,7 +222,7 @@ class PedestrianDataset(VisionDataset):
         head_pts   = torch.tensor(  head_pts, dtype=torch.float32)
 
         for pt_idx, (pid, wh) in enumerate(zip(img_pids, size_pts)):
-            for idx, pt in enumerate(foot_pts[pt_idx]):
+            for idx, pt in enumerate((foot_pts[pt_idx], )):
                 if (pt[0] < 0) or (pt[0] >= W) \
                 or (pt[1] < 0) or (pt[1] >= H):
                     continue
@@ -328,7 +329,7 @@ class PedestrianDataset(VisionDataset):
             pids_img, valids_img = self.get_image_data(frame, cameras)
 
         worldcoord_from_worldgrid = torch.eye(4)
-        worldcoord_from_worldgrid2d = torch.tensor(self.base.worldcoord_from_worldgrid_mat, dtype=torch.float32)
+        worldcoord_from_worldgrid2d = torch.tensor(self.base.worldcoord_from_worldgrid_matrix, dtype=torch.float32)
         worldcoord_from_worldgrid[:2, :2] = worldcoord_from_worldgrid2d[:2, :2]
         worldcoord_from_worldgrid[:2,  3] = worldcoord_from_worldgrid2d[:2, 2]
         worldgrid_T_worldcoord = torch.inverse(worldcoord_from_worldgrid)

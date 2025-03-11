@@ -23,7 +23,7 @@ class PedestrianDataLoader(pl.LightningDataModule):
              data_type: str,
            num_workers: int = 4,
             batch_size: int = 2,
-      batch_grad_accum: int = 8,
+      accumulate_grad_batches: int = 8,
             resolution = None,
                 bounds = None,
     ):
@@ -35,7 +35,7 @@ class PedestrianDataLoader(pl.LightningDataModule):
 
         self.num_workers = num_workers
         self.batch_size = batch_size
-        self.batch_grad_accum = batch_grad_accum
+        self.accumulate_grad_batches = accumulate_grad_batches
 
         self.resolution = resolution
         self.bounds = bounds
@@ -50,7 +50,7 @@ class PedestrianDataLoader(pl.LightningDataModule):
         if self.data_type == 'wildtrack':
             dataclass = Wildtrack
         elif self.data_type == 'multiviewx':
-            dataset_base = MultiviewX
+            dataclass = MultiviewX
         else:
             raise ValueError(f'{self.data_type} is not supported! Choose `wildtrack` or `multiviewx`!')
 
@@ -73,7 +73,7 @@ class PedestrianDataLoader(pl.LightningDataModule):
 
     def sampler(self, data):
         return TemporalSampler(data, batch_size = self.batch_size,
-                                    batch_grad_accum = self.batch_grad_accum)
+                                    accumulate_grad_batches = self.accumulate_grad_batches)
 
     def train_dataloader(self):
         return DataLoader(self.data_train,
@@ -108,7 +108,7 @@ class VehicleDataLoader(pl.LightningDataModule):
             test_split: str = 'test',
            num_workers: int = 8,
             batch_size: int = 6,
-      batch_grad_accum: int = 8,
+      accumulate_grad_batches: int = 8,
             resolution = None,
                 bounds = None,
     ):
@@ -118,7 +118,7 @@ class VehicleDataLoader(pl.LightningDataModule):
 
         self.num_workers = num_workers
         self.batch_size = batch_size
-        self.batch_grad_accum = batch_grad_accum
+        self.accumulate_grad_batches = accumulate_grad_batches
 
         self.resolution = resolution
         self.bounds = bounds
@@ -146,7 +146,7 @@ class VehicleDataLoader(pl.LightningDataModule):
 
     def sampler(self, data):
         return TemporalSampler(data, batch_size = self.batch_size,
-                                    batch_grad_accum = self.batch_grad_accum)
+                                    accumulate_grad_batches = self.accumulate_grad_batches)
 
     def train_dataloader(self):
         return DataLoader(

@@ -4,8 +4,8 @@ from typing import List
 
 import numpy as np
 
-from tracking import matching
-from tracking.kalman_filter import KalmanFilter
+from .matching import center_distance, linear_assignment, iou_distance
+from .kalman_filter import KalmanFilter
 
 
 class TrackState(object):
@@ -219,8 +219,8 @@ class JDETracker:
         strack_pool_xy     = [track.xy for track in strack_pool]
         detections_xy_prev = [det.xy_prev for det in detections]
 
-        dists = matching.center_distance(strack_pool_xy, detections_xy_prev)
-        matches, u_track, u_detection = matching.linear_assignment(dists, thresh=75)
+        dists = center_distance(strack_pool_xy, detections_xy_prev)
+        matches, u_track, u_detection = linear_assignment(dists, thresh=75)
 
         for itracked, idet in matches:
             track = strack_pool[itracked]
@@ -246,9 +246,9 @@ class JDETracker:
         detections_xy = [det.xy_prev for det in detections]
         unconfirmed_xy = [track.xy for track in unconfirmed]
 
-        # dists = matching.iou_distance(unconfirmed, detections)
-        dists = matching.center_distance(unconfirmed_xy, detections_xy)
-        matches, u_unconfirmed, u_detection = matching.linear_assignment(dists, thresh=100)
+        # dists = iou_distance(unconfirmed, detections)
+        dists = center_distance(unconfirmed_xy, detections_xy)
+        matches, u_unconfirmed, u_detection = linear_assignment(dists, thresh=100)
         
         for itracked, idet in matches:
             unconfirmed[itracked].update(detections[idet], self.frame_id)
@@ -333,7 +333,7 @@ def dedup_stracks(stracksa, stracksb):
     track_a = [t.xy_prev for t in stracksa]
     track_b = [t.xy for t in stracksb]
 
-    pdist = matching.center_distance(track_a, track_b)
+    pdist = center_distance(track_a, track_b)
     pairs = np.where(pdist < 6)
 
     dupa, dupb = list(), list()

@@ -1,9 +1,7 @@
 # Local folders
 venv/
-datasets/ICSens/
-datasets/Wildtrack/
-datasets/MultiviewX/
 checkpoints/
+lightning_logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

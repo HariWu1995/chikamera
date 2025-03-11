@@ -96,7 +96,7 @@ class MVDet(nn.Module):
                  vox_util: vox util object
         """
         B, S, C, H, W = rgb_cams.shape
-        device = rgb_cams_.device
+        device = rgb_cams.device
 
         # reshape tensors
         __p = lambda x:   pack_seqdim(x, B)

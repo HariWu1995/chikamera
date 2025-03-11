@@ -34,3 +34,4 @@ def simulated_annealing(grid_points, camera_coords, image_plane_size: int,
     
     return best_solution
 
+
