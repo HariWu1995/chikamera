@@ -425,7 +425,7 @@ if __name__ == '__main__':
     cli = TrackLightningCLI(model_class=WorldTrackModel)
 
     """
-    Train: GPU > 10.6 Gb
+    Train: GPU > 15 Gb (each)
         python -m libs.TrackTacular.world_track fit \
             -c libs/TrackTacular/configs/trainer_fit.yml \
             -c libs/TrackTacular/configs/dataset_{multiviewx,wildtrack,synthehicle}.yml \

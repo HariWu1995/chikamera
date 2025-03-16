@@ -20,32 +20,61 @@ Gerhard Rigoll
 
 ![Overview](./overview.svg)
 
-## Usage
-
-### Getting Started
+## Environment
 1. Install [PyTorch](https://pytorch.org/get-started/locally/) with CUDA support
     ```shell
-   pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
    ```
-2. Install [mmcv](https://mmcv.readthedocs.io/en/latest/get_started/installation.html#install-with-pip) with CUDA support
-   ```shell
-   pip install mmcv==2.0.0 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.1/index.html
-   ```
-3. Install remaining dependencies
+
+2. Install remaining dependencies
    ```shell
    pip install -r requirements.txt
    ```
 
-### Training
+<details>
+<summary>MMCV</summary>
+
+- Original: Install [mmcv](https://mmcv.readthedocs.io/en/latest/get_started/installation.html#install-with-pip) with CUDA support
+   ```shell
+   pip install mmcv==2.0.0 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.1/index.html
+   ```
+
+- Windows: Torch 2.5.1 + CUDA 12.4
+   ```shell
+   pip install mmcv-full==1.7.1 -f https://download.openmmlab.com/mmcv/dist/12.4/2.5.1/index.html
+   ```
+
+- Kaggle: read this [notebook](https://www.kaggle.com/code/mrriandmstique/mmcv-builder)
+</details>
+
+## Training
+Requirement: GPU > 15 Gb
+
+Single-GPU Training:
 ```shell
-python world_track.py fit -c configs/t_fit.yml \
-    -c configs/d_{multiviewx,wildtrack,synthehicle}.yml \
-    -c configs/m_{mvdet,segnet,liftnet,bevformer}.yml
+python -m libs.TrackTacular.world_track fit \
+       -c libs/TrackTacular/configs/trainer_fit.yml \
+       -c libs/TrackTacular/configs/dataset_{multiviewx,wildtrack,synthehicle}.yml \
+       -c libs/TrackTacular/configs/model_{mvdet,segnet,liftnet,bevformer}.yml
 ```
-### Testing
+
+Distributed Training:
 ```shell
-python world_track.py test -c model_weights/config.yaml \
-    --ckpt model_weights/model-epoch=35-val_loss=6.50.ckpt --data.batch_size 1
+python -m libs.TrackTacular.world_track fit \
+       -c libs/TrackTacular/configs/trainer_fit.yml \
+       -c libs/TrackTacular/configs/trainer_dist.yml \
+       -c libs/TrackTacular/configs/dataset_{multiviewx,wildtrack,synthehicle}.yml \
+       -c libs/TrackTacular/configs/model_{mvdet,segnet,liftnet,bevformer}.yml
+```
+
+Training on [Kaggle](https://www.kaggle.com/code/mrriandmstique/tracktacular)
+
+## Testing
+```shell
+python -m libs.TrackTacular.world_track test \
+        -c "./checkpoints/TrackTacular/mvx_liftnet/config.yaml" \
+    --ckpt "./checkpoints/TrackTacular/mvx_liftnet/model.ckpt" \
+    --data.batch_size 1
 ```
 
 ## Acknowledgement
