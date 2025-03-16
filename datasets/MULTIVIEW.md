@@ -49,16 +49,6 @@ The **identity number** of a pedestrian is unique and identical across viewpoint
 - **Camera Setup**:
 <img src="../assets/camera_layout_icSens.jpg">
 
-## 👨‍👩‍👧‍👦 CrowdHuman
-
-CrowdHuman is a benchmark dataset to better evaluate detectors in **crowd scenarios**. The dataset is large, **rich-annotated** and contains **high diversity**. 
-
-CrowdHuman contains 15000, 4370 and 5000 images for training, validation, and testing, respectively. There are a total of **470K human instances** from train and validation subsets and **23 persons per image**, with various kinds of occlusions in the dataset. 
-
-Each human instance is annotated with a **head bounding-box**, **human visible-region bounding-box** and **human full-body bounding-box**.
-
-- **Download**: [page](https://www.crowdhuman.org/download.html)
-
 ## ⛁ Others
 
 - Multi-Camera Trajectory Forecasting ([paper](https://arxiv.org/abs/2005.00282) | [repo](https://github.com/olly-styles/Multi-Camera-Trajectory-Forecasting))
