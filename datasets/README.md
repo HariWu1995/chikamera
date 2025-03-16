@@ -2,7 +2,7 @@
 
 ## 🌌🐾 OpenTraj
 
-Read more @ [libs/OpenTraj/README.md](../libs/OpenTraj/README.md)
+Read more @ [OpenTraj.md](./OpenTraj.md)
 
 ## ୧⍤⃝📷 Multi-view
 
