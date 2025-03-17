@@ -62,56 +62,55 @@ So far multiple datasets are supported.
 ### 1. Benchmarks
 Using python files in [indicators](libs/OpenTraj/indicators) directory, you can generate the results of each of the indicators presented in the article. For more information about each of the scripts check the information in [libs/OpenTraj](libs/OpenTraj).
 
+To benchmarking all indicators, run
+```bash
+python -m libs.OpenTraj.benchmark
+```
+Results are stored in **[temp/benchmark](temp/benchmark)**.
+
 ### 2. Loaders
 Using python files in [loaders](libs/OpenTraj/loaders) directory, you can load a dataset into a dataset object, which uses Pandas data frames to store the data. It would be super easy to retrieve the trajectories, using different queries (by agent_id, timestamp, ...).
 
 ### 3. Visualization
-A simple script is added [play.py](libs/OpenTraj/ui/play.py), and can be used to visualize a given dataset:
+A simple script [ui_pyqt.py](libs/OpenTraj/ui/ui_pyqt.py) can be used to visualize a given dataset:
 
 <p align='center'>
   <img src='../libs/OpenTraj/docs/figs/fig-opentraj-ui.gif' width='400px'\>
 </p>
 
+Some other visualization scripts are [ui_cv.py](libs/OpenTraj/ui/ui_cv.py) and [ui_dash.py](libs/OpenTraj/ui/ui_dash.py).
 
-<!--
+
 ## Metrics
-**1. ADE** (T<sub>obs</sub>, T<sub>pred</sub>):
-Average Displacement Error (ADE), also called Mean Euclidean Distance (MED), measures the averages Euclidean distances between points of the predicted trajectory and the ground truth that have the same temporal distance from their respective start points. The function arguemnts are:
+
+### Notation
 - T<sub>obs</sub> : observation period
 - T<sub>pred</sub> : prediction period
-<br/>
-**2. FDE** (T<sub>obs</sub>, T<sub>pred</sub>):
-Final Displacement Error (FDE) measures the distance between final predicted position and the ground truth position at the corresponding time point. The function arguemnts are:
-- T<sub>obs</sub> : observation period
-- T<sub>pred</sub> : prediction period
-<br/>
-## State-of-the-art Trajectory Prediction Algorithms
+
+### 1. ADE (T<sub>obs</sub>, T<sub>pred</sub>)
+**Average Displacement Error** (ADE), also called **Mean Euclidean Distance** (MED), measures the averages Euclidean distances between points of the predicted trajectory and the ground truth that have the same temporal distance from their respective start points.
+
+### 2. FDE (T<sub>obs</sub>, T<sub>pred</sub>)
+**Final Displacement Error** (FDE) measures the distance between final predicted position and the ground truth position at the corresponding time point.
+
+## Algorithms (SOTA)
 \* The numbers are derived from papers.
 - [ ] setup benchmarking 
 - [ ] update top 20 papers
 -->
-<!--
-#### 1. ETH Dataset
--->
 
-<!--begin(table_ETH)-->
+## References
 
-<!--end(table_ETH)-->
-
-<!--
-`TBC`
--->
-
-
-<!--
-#### (A) Main References:
+### Main References:
 - Who are you with and Where are you going? (Social Force), Yamaguchi et al. CVPR 2011. [paper]()
 - Social LSTM: Human trajectory prediction in crowded spaces, Alahi et al. CVPR 2016. [paepr]()
 - Learning social etiquette: Human trajectory understanding in crowded scenes, Robicquet et al. ECCV 2016. [paper](https://infoscience.epfl.ch/record/230262/files/ECCV16social.pdf) 
 - Social GAN: Socially Acceptable Trajectories with Generative Adversarial Networks, Gupta et al. CVPR 2018. [paper]()
 - Social Ways: Learning Multi-Modal Distributions of Pedestrian Trajectories with GANs, Amirian et al. CVPR 2019. [paper](), [code]()
--->
-**References**: an *awesome* list of trajectory prediction references can be found [here](https://github.com/jiachenli94/Awesome-Interaction-aware-Trajectory-Prediction)
+
+### Other References: 
+An *awesome* list of trajectory prediction references can be found [here](https://github.com/jiachenli94/Awesome-Interaction-aware-Trajectory-Prediction)
+
 <!--
 - Desire: Distant future prediction in dynamic scenes with interacting agents, Lee et al. CVPR 2017. [paper](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lee_DESIRE_Distant_Future_CVPR_2017_paper.pdf)
 - Sophie: An attentive gan for predicting paths compliant to social and physical constraints, Sadeghian et al. CVPR 2019. [paper](https://arxiv.org/pdf/1806.01482.pdf)
@@ -131,10 +130,8 @@ Final Displacement Error (FDE) measures the distance between final predicted pos
 - A survey on motion prediction and risk assessment for intelligent vehicles, ROBOMECH 2014. [paper](https://core.ac.uk/download/pdf/81530180.pdf)
 -->
 
-<!--
-**Collaboration:** Are you interested in collaboration on OpenTraj? Send an email to [me](mailto:amiryan.j@gmail.com?subject=OpenTraj) titled *OpenTraj*.
--->
-**Contributions:** Have any idea to improve the code? Fork the project, update it and submit a merge request. 
+## Contributions
+Have any idea to improve the code? Fork the project, update it and submit a merge request. 
 - Feel free to open new issues.
 
 If you find this work useful in your research, then please cite:
