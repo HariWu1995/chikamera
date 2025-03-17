@@ -1,8 +1,10 @@
+import os
+import sys
+
 import pandas as pd
 import numpy as np
-import sys
-import os
-from toolkit.core.trajdataset import TrajDataset
+
+from ..core.trajdataset import TrajDataset
 
 
 def load_chaos(path, separator, **kwargs):

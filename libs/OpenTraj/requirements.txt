@@ -1,12 +1,14 @@
-matplotlib
-numpy
-opencv-python
-pandas
-pykalman
-PyYAML
-scikit-learn
-scipy
 seaborn
-sklearn
-sympy
-tqdm
+pykalman
+PyQt5
+dash-bootstrap-components
+# matplotlib
+# numpy
+# opencv-python
+# pandas
+# PyYAML
+# scikit-learn
+# scipy
+# sklearn
+# sympy
+# tqdm

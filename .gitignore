@@ -1,4 +1,5 @@
 # Local folders
+temp/
 venv/
 checkpoints/
 lightning_logs/

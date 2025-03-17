@@ -15,6 +15,7 @@ SQRT3 = 1.732050807568877293527446341505872366943
 
 
 class CameraParameters:
+
     def __init__(self):
         self.Ncx = 0  # /* [sel]     Number of sensor elements in camera's x direction   */
         self.Nfx = 0  # /* [pix]     Number of pixels in frame grabber's x direction     */
@@ -28,6 +29,7 @@ class CameraParameters:
 
 
 class CalibrationConstants:
+    
     def __init__(self):
         self.f = 0  # /* [mm]          */
         self.kappa1 = 0  # /* [1/mm^2]      */

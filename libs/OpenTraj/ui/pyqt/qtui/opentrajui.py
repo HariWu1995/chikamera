@@ -2,18 +2,22 @@
 import sys
 import cv2
 import numpy as np
+
 # from PySide2.QtWidgets import QApplication, QCoreApplication, QMainWindow, QGraphicsView
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtWidgets import QGraphicsScene, QGraphicsItem, QGraphicsPixmapItem, QGraphicsPathItem, QGraphicsEllipseItem
 from PyQt5.QtGui import QPixmap, QImage, QPainterPath, QBrush, QPen, QPainter, QColor
 from PyQt5.QtCore import QEventLoop, QRectF
+
 from .mainwindow import Ui_MainWindow
 
 
 class GraphicsCircle(QGraphicsEllipseItem):
     pass
 
+
 class GraphicsPath(QGraphicsPathItem):
+
     # def setBrush(self, Union, QBrush=None, QColor=None, Qt_GlobalColor=None, QGradient=None):
     def paint(self, painter: QPainter, styleOptionGraphicsItem, widget=None):
         # painter.setBrush()
@@ -25,12 +29,13 @@ class GraphicsPath(QGraphicsPathItem):
 
 
 class OpenTrajUI(QMainWindow, Ui_MainWindow):
+
     def __init__(self, reserve_n_agents=1):
         self.app = QApplication([])
         super(OpenTrajUI, self).__init__()
         self.setupUi(self)
         self.scene = QGraphicsScene()
-#        self.scene.setSceneRect(QRectF(QPointF(-1000, 1000), QSizeF(2000, 2000)));
+        # self.scene.setSceneRect(QRectF(QPointF(-1000, 1000), QSizeF(2000, 2000)));
 
         self.graphicsView.setScene(self.scene)
         self.connectWidgets()
@@ -53,8 +58,8 @@ class OpenTrajUI(QMainWindow, Ui_MainWindow):
         im_np = np.require(im_np, np.uint8, 'C')
         qimage = QImage(im_np.data, im_np.shape[1], im_np.shape[0], im_np.strides[0], QImage.Format_RGB888)
         self.pixmap_item.setPixmap(QPixmap(qimage))
-#        self.pixmap_item.update()
-#        self.scene.update()
+        # self.pixmap_item.update()
+        # self.scene.update()
 
     def __add_circle_item__(self):
         circle_item = QGraphicsEllipseItem()
@@ -64,7 +69,6 @@ class OpenTrajUI(QMainWindow, Ui_MainWindow):
     def __add_path_item__(self):
         path_item = QGraphicsPathItem()
         # path_item = GraphicsPath()
-
         self.scene.addItem(path_item)
         self.path_items.append(path_item)
 

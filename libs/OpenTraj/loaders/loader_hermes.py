@@ -1,18 +1,18 @@
 # Author: Javad Amirian
 # Email: amiryan.j@gmail.com
+import os
 
 import pandas as pd
 import numpy as np
-import sys
-import os
-from toolkit.core.trajdataset import TrajDataset
+
+from ..core.trajdataset import TrajDataset
 
 
-def load_bottleneck(path, **kwargs):
+def load_hermes(path, **kwargs):
     traj_dataset = TrajDataset()
 
-    csv_columns = ["agent_id", "frame_id", "pos_x", "pos_y", "pos_z"]
     # read from csv => fill traj table
+    csv_columns = ["agent_id", "frame_id", "pos_x", "pos_y", "pos_z"]
     raw_dataset = pd.read_csv(path, sep=r"\s+", header=None, names=csv_columns)
 
     # convert from cm => meter
@@ -22,8 +22,8 @@ def load_bottleneck(path, **kwargs):
     traj_dataset.title = kwargs.get('title', "no_title")
 
     # copy columns
-    traj_dataset.data[["frame_id", "agent_id", "pos_x", "pos_y"]] = \
-        raw_dataset[["frame_id", "agent_id", "pos_x", "pos_y"]]
+    columns = ["frame_id", "agent_id", "pos_x", "pos_y"]
+    traj_dataset.data[columns] = raw_dataset[columns]
 
     traj_dataset.data["scene_id"] = kwargs.get('scene_id', 0)
     traj_dataset.data["label"] = "pedestrian"
@@ -40,3 +40,10 @@ def load_bottleneck(path, **kwargs):
     traj_dataset.apply_transformation(transform, inplace=True)
 
     return traj_dataset
+
+
+if __name__ == '__main__':
+    dataroot = "F:/__Datasets__/OpenTraj/HERMES"
+    dataset = load_hermes(f"{dataroot}/Corridor-1D/uo-050-180-180.txt")
+    print(dataset.get_agent_ids())
+

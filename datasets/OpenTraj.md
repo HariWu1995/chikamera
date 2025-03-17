@@ -60,16 +60,16 @@ So far multiple datasets are supported.
 
 
 ### 1. Benchmarks
-Using python files in [benchmarking/indicators](toolkit/benchmarking/indicators) dir, you can generate the results of each of the indicators presented in the article. For more information about each of the scripts check the information in [toolkit](toolkit).
+Using python files in [indicators](libs/OpenTraj/indicators) directory, you can generate the results of each of the indicators presented in the article. For more information about each of the scripts check the information in [libs/OpenTraj](libs/OpenTraj).
 
 ### 2. Loaders
-Using python files in [loaders](toolkit/loaders) dir, you can load a dataset into a dataset object, which uses Pandas data frames to store the data. It would be super easy to retrieve the trajectories, using different queries (by agent_id, timestamp, ...).
+Using python files in [loaders](libs/OpenTraj/loaders) directory, you can load a dataset into a dataset object, which uses Pandas data frames to store the data. It would be super easy to retrieve the trajectories, using different queries (by agent_id, timestamp, ...).
 
 ### 3. Visualization
-A simple script is added [play.py](opentraj/toolkit/ui/play.py), and can be used to visualize a given dataset:
+A simple script is added [play.py](libs/OpenTraj/ui/play.py), and can be used to visualize a given dataset:
 
 <p align='center'>
-  <img src='docs/figs/fig-opentraj-ui.gif' width='400px'\>
+  <img src='../libs/OpenTraj/docs/figs/fig-opentraj-ui.gif' width='400px'\>
 </p>
 
 
@@ -111,7 +111,7 @@ Final Displacement Error (FDE) measures the distance between final predicted pos
 - Social GAN: Socially Acceptable Trajectories with Generative Adversarial Networks, Gupta et al. CVPR 2018. [paper]()
 - Social Ways: Learning Multi-Modal Distributions of Pedestrian Trajectories with GANs, Amirian et al. CVPR 2019. [paper](), [code]()
 -->
-**References**: an *awsome* list of trajectory prediction references can be found [here](https://github.com/jiachenli94/Awesome-Interaction-aware-Trajectory-Prediction)
+**References**: an *awesome* list of trajectory prediction references can be found [here](https://github.com/jiachenli94/Awesome-Interaction-aware-Trajectory-Prediction)
 <!--
 - Desire: Distant future prediction in dynamic scenes with interacting agents, Lee et al. CVPR 2017. [paper](http://openaccess.thecvf.com/content_cvpr_2017/papers/Lee_DESIRE_Distant_Future_CVPR_2017_paper.pdf)
 - Sophie: An attentive gan for predicting paths compliant to social and physical constraints, Sadeghian et al. CVPR 2019. [paper](https://arxiv.org/pdf/1806.01482.pdf)

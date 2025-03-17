@@ -1,23 +1,29 @@
 # Author: Javad Amirian
 # Email: amiryan.j@gmail.com
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-from toolkit.utils.kalman_smoother import KalmanModel
 pd.options.mode.chained_assignment = None  # default='warn'
+
+from ..utils.kalman_smoother import KalmanModel
+
+
+EPS = 1E-2
 
 
 class TrajDataset:
+
     def __init__(self):
         """
         data might include the following columns:
-        "scene_id", "frame_id", "agent_id",
-         "pos_x", "pos_y"
-          "vel_x", "vel_y",
+            "scene_id", "frame_id", "agent_id",
+            "pos_x", "pos_y"
+            "vel_x", "vel_y",
         """
         self.critical_columns = ["frame_id", "agent_id", "pos_x", "pos_y"]
         self.data = pd.DataFrame(columns=self.critical_columns)
+        self.title = ''
 
         # a map from agent_id to a list of [agent_ids] that are annotated as her groupmate
         # if such informatoin is not available the map should be filled with an empty list
@@ -25,17 +31,15 @@ class TrajDataset:
         self.groupmates = {}
 
         # fps is necessary to calc any data related to time (e.g. velocity, acceleration)
-
-        self.title = ''
         self.fps = -1
 
         # bounding box of trajectories
-        #  FixME: bbox should be a function of scene_id
+        # TODO: bbox should be a function of scene_id
         # self.bbox = pd.DataFrame({'x': [np.nan, np.nan],
         #                           'y': [np.nan, np.nan]},
         #                          index=['min', 'max'])
 
-        # FixMe ?
+        # TODO: ???
         #  self.trajectories_lazy = []
 
     def postprocess(self, fps, sampling_rate=1, use_kalman=False):
@@ -52,10 +56,10 @@ class TrajDataset:
         :param fps: video framerate
         :param sampling_rate: if bigger than one, the data needs downsampling,
                               otherwise needs interpolation
-        :param use_kalman:  for smoothing agent velocities
+        :param use_kalman:  for smoothing agent 
+
         :return: None
         """
-
         # check
         for critical_column in self.critical_columns:
             if critical_column not in self.data:
@@ -65,6 +69,7 @@ class TrajDataset:
         self.data["frame_id"] = self.data["frame_id"].astype(int)
         if str(self.data["agent_id"].iloc[0]).replace('.', '', 1).isdigit():
             self.data["agent_id"] = self.data["agent_id"].astype(int)
+
         self.data["pos_x"] = self.data["pos_x"].astype(float)
         self.data["pos_y"] = self.data["pos_y"].astype(float)
         self.data["label"] = self.data["label"].str.lower()  # search with lower-case labels
@@ -72,8 +77,8 @@ class TrajDataset:
         # fill scene_id
         if "scene_id" not in self.data:
             self.data["scene_id"] = 0
-        self.fps = fps
 
+        self.fps = fps
 
         # fill timestamps based on frame_id and video_fps
         if "timestamp" not in self.data:
@@ -87,14 +92,15 @@ class TrajDataset:
 
         # down/up sampling frames
         if sampling_rate >= 2:
-            # FixMe: down-sampling
+            # TODO: down-sampling
             sampling_rate = int(sampling_rate)
             self.data = self.data.loc[(self.data["frame_id"] % sampling_rate) == 0]
             self.data = self.data.reset_index()
         elif sampling_rate < (1-1E-2):
             # TODO: interpolation
             pass
-        else:pass
+        else:
+            pass
 
         # remove the trajectories shorter than 2 frames
         data_grouped = self.data.groupby(["scene_id", "agent_id"])
@@ -111,17 +117,25 @@ class TrajDataset:
 
             self.data["vel_x"] = (data_grouped["pos_x"].diff() / dt).astype(float)
             self.data["vel_y"] = (data_grouped["pos_y"].diff() / dt).astype(float)
-            nan_inds = np.array(np.nonzero(dt.isnull().to_numpy())).reshape(-1)
+
+            nan_inds = np.array(np.nonzero(dt.isnull().to_numpy())).reshape(-1).tolist()
+            nan_inds = [i for i in nan_inds if i in self.data.index.tolist()]   # BUG: fix for Wildtrack
+            nan_inds = np.array(nan_inds)
+
             self.data.loc[nan_inds]["vel_x"] = self.data["vel_x"].iloc[nan_inds + 1].to_numpy()
             self.data.loc[nan_inds]["vel_y"] = self.data["vel_y"].iloc[nan_inds + 1].to_numpy()
 
         # ============================================
         if use_kalman:
+
             def smooth(group):
                 if len(group) < 2: return group
                 dt = group["timestamp"].diff().iloc[1]
                 kf = KalmanModel(dt, n_dim=2, n_iter=7)
-                smoothed_pos, smoothed_vel = kf.smooth(group[["pos_x", "pos_y"]].to_numpy())
+
+                smoothed_pos, \
+                smoothed_vel = kf.smooth(group[["pos_x", "pos_y"]].to_numpy())
+                
                 group["pos_x"] = smoothed_pos[:, 0]
                 group["pos_y"] = smoothed_pos[:, 1]
 
@@ -130,12 +144,16 @@ class TrajDataset:
                 return group
 
             tqdm.pandas(desc="Smoothing trajectories (%s)" % self.title)
-            # print('Smoothing trajectories ...')
+
             data_grouped = self.data.groupby(["scene_id", "agent_id"])
-            self.data = data_grouped.progress_apply(smooth)
+            data_grouped = data_grouped.progress_apply(smooth)
+
+            # TODO: Ungroup
+            self.data = data_grouped
+            # self.data = data_grouped.reset_index().sort_values('frame_id')
 
         # compute bounding box
-        # Warning: the trajectories should belong to the same (physical) scene
+        # WARNING: the trajectories should belong to the same (physical) scene
         # self.bbox['x']['min'] = min(self.data["pos_x"])
         # self.bbox['x']['max'] = max(self.data["pos_x"])
         # self.bbox['y']['min'] = min(self.data["pos_y"])
@@ -143,13 +161,15 @@ class TrajDataset:
 
     def interpolate_frames(self, inplace=True):
         """
-        Knowing the framerate , the FRAMES that are not annotated will be interpolated.
+        Knowing the framerate, the FRAMES that are not annotated will be interpolated.
         :param inplace: Todo
         :return: None
         """
+        self.data["frame_id"] = self.data["frame_id"].astype(int)
+
         all_frame_ids = sorted(pd.unique(self.data["frame_id"]))
         if len(all_frame_ids) < 2:
-            # FixMe: print warning
+            # TODO: print warning
             return
 
         frame_id_A = all_frame_ids[0]
@@ -157,6 +177,7 @@ class TrajDataset:
         agent_ids_A = frame_A["agent_id"].to_list()
         interp_data = self.data  # "agent_id", "pos_x", "pos_y", "vel_x", "vel_y"
         # df.append([df_try] * 5, ignore_index=True
+
         for frame_id_B in tqdm(all_frame_ids[1:], desc="Interpolating frames"):
             frame_B = self.data.loc[self.data["frame_id"] == frame_id_B]
             agent_ids_B = frame_B["agent_id"].to_list()
@@ -164,6 +185,7 @@ class TrajDataset:
             common_agent_ids = list(set(agent_ids_A) & set(agent_ids_B))
             frame_A_fil = frame_A.loc[frame_A["agent_id"].isin(common_agent_ids)]
             frame_B_fil = frame_B.loc[frame_B["agent_id"].isin(common_agent_ids)]
+
             for new_frame_id in range(frame_id_A+1, frame_id_B):
                 alpha = (new_frame_id - frame_id_A) / (frame_id_B - frame_id_A)
                 new_frame = frame_A_fil.copy()
@@ -179,19 +201,22 @@ class TrajDataset:
                 if inplace:
                     self.data = self.data.append(new_frame)
                 else:
-                    self.data = self.data.append(new_frame)  # TODO
+                    # TODO: ???
+                    self.data = self.data.append(new_frame)
+
             frame_id_A = frame_id_B
             frame_A = frame_B
             agent_ids_A = agent_ids_B
+
         self.data = self.data.sort_values('frame_id')
 
     def apply_transformation(self, tf: np.ndarray, inplace=False):
         """
         :param tf: np.ndarray
-            Homogeneous Transformation Matrix,
-            3x3 for 2D data
+            Homogeneous Transformation Matrix, 3x3 for 2D data
         :param inplace: bool, default False
             If True, do operation inplace
+
         :return: transformed data table
         """
         if inplace:
@@ -202,19 +227,19 @@ class TrajDataset:
         # data is 2D
         assert tf.shape == (3, 3)
         tf = tf[:2, :]  # remove the last row
-        poss = target_data[["pos_x", "pos_y"]].to_numpy(dtype=np.float)
+        poss = target_data[["pos_x", "pos_y"]].to_numpy(dtype=np.float64)
         poss = np.concatenate([poss, np.ones((len(poss), 1))], axis=1)
         target_data[["pos_x", "pos_y"]] = np.matmul(tf, poss.T).T
 
         # apply on velocities
         tf[:, -1] = 0  # do not apply the translation element on velocities!
-        vels = target_data[["vel_x", "vel_y"]].to_numpy(dtype=np.float)
+        vels = target_data[["vel_x", "vel_y"]].to_numpy(dtype=np.float64)
         vels = np.concatenate([vels, np.ones((len(vels), 1))], axis=1)
         target_data[["vel_x", "vel_y"]] = np.matmul(tf, vels.T).T
 
         return target_data
 
-    # FixMe: rename to add_row()/add_entry()
+    # FIXME: rename to add_row() / add_entry()
     def add_agent(self, agent_id, frame_id, pos_x, pos_y):
         """Add one single data at a specific frame to dataset"""
         new_df = pd.DataFrame(columns=self.critical_columns)
@@ -232,9 +257,11 @@ class TrajDataset:
     def get_entries(self, agent_ids=[], frame_ids=[], label=""):
         """
         Returns a list of data entries
+
         :param agent_ids: select specific agent ids, ignore if empty
         :param frame_ids: select a time interval, ignore if empty  # TODO:
         :param label: select agents from a specific label (e.g. car), ignore if empty # TODO:
+
         :return list of data entries
         """
         output_table = self.data  # no filter
@@ -265,30 +292,27 @@ class TrajDataset:
         :param label: select agents from a specific class (e.g. pedestrian), ignore if empty
         :return list of trajectories
         """
-
         trajectories = []
-        df = self.data
+        df = self.data.reset_index(drop=True)
         if label:
-            label_filtered = self.data.groupby("label")
+            label_filtered = df.groupby("label")
             df = label_filtered.get_group(label.lower())
-
         return df.groupby(["scene_id", "agent_id"])
 
     def get_trajlets(self, length=4.8, overlap=2., filter_min_displacement=1., to_numpy=False):
         """
-            :param length:      min duration for trajlets
-            :param overlap:     min overlap duration between consequent trajlets
-            :param filter_min_displacement:  if a trajlet is shorter than this thrshold, then it is stationary
-                                             and would be filtered
-            :param to_numpy: (bool) if True the result will be np.ndarray
-            :return: list of Pandas DataFrames (all columns)
-                     or Numpy ndarray(NxTx5): ["pos_x", "pos_y", "vel_x", "vel_y", "timestamp"]
-        """
+        :param length:      min duration for trajlets
+        :param overlap:     min overlap duration between consequent trajlets
+        :param filter_min_displacement:  if a trajlet is shorter than this thrshold, 
+                                        then it is stationary and would be filtered
+        :param to_numpy: (bool) if True the result will be np.
 
+        :return: list of Pandas DataFrames (all columns)
+                    or Numpy ndarray(NxTx5): ["pos_x", "pos_y", "vel_x", "vel_y", "timestamp"]
+        """
         trajs = self.get_trajectories()
         trajlets = []
 
-        EPS = 1E-2
         dt = trajs["timestamp"].diff().dropna().iloc[0]
         f_per_traj = int(np.ceil((length - EPS) / dt))
         f_step = int(np.ceil((length - overlap - EPS) / dt))
@@ -298,9 +322,11 @@ class TrajDataset:
 
             n_frames = len(tr)
             for start_f in range(0, n_frames - f_per_traj, f_step):
-                if filter_min_displacement < EPS or \
-                        np.linalg.norm(tr[["pos_x", "pos_y"]].iloc[start_f + f_per_traj].to_numpy() -
-                                       tr[["pos_x", "pos_y"]].iloc[start_f].to_numpy()) > filter_min_displacement:
+                if filter_min_displacement < EPS \
+                or np.linalg.norm(
+                    tr[["pos_x", "pos_y"]].iloc[start_f + f_per_traj].to_numpy() -
+                    tr[["pos_x", "pos_y"]].iloc[start_f].to_numpy()
+                ) > filter_min_displacement:
                     trajlets.append(tr.iloc[start_f:start_f + f_per_traj])
 
         if to_numpy:
@@ -312,12 +338,11 @@ class TrajDataset:
 
         return trajlets
 
-    # Todo: add 'to_numpy' arguement
+    # TODO: add 'to_numpy' arguement
     def get_simultaneous_trajlets(self, length=8.0, overlap=4.0):
         ts = self.data["timestamp"].min()
         te = self.data["timestamp"].max()
 
-        EPS = 1E-2
         trajlets = []
         for t_start_i in np.arange(ts, te, length-overlap):
             t_end_i = t_start_i + length
@@ -329,7 +354,7 @@ class TrajDataset:
             dt = grouped_trajs["timestamp"].diff().dropna().iloc[0]
             trajlets.append([gr for _, gr in grouped_trajs])
 
-            # todo
+            # TODO
             max_nb_frames = length / dt
 
         return trajlets
@@ -342,14 +367,13 @@ def merge_datasets(dataset_list, new_title=[]):
         return dataset_list[0]
 
     merged = dataset_list[0]
-
     for ii in range(1, len(dataset_list)):
-        merged.data = merged.data.append(dataset_list[ii].data)
+        merged.data = pd.concat([merged.data, dataset_list[ii].data])
         if dataset_list[ii].title != merged.title:
             merged.title = merged.title + " + " + dataset_list[ii].title
+
     if len(new_title):
         merged.title = new_title
-
     return merged
 
 

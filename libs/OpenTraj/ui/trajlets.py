@@ -4,11 +4,29 @@
 import os
 import cv2
 import numpy as np
+
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("TkAgg")
-from toolkit.ui.ui_projectpoint import to_image_frame
-from toolkit.ui.ui_constants import RED_COLOR
+
+from .const import RED_COLOR
+
+
+def to_image_frame(Hinv, loc):
+    """
+    Given H^-1 and world coordinates, returns (u, v) in image coordinates.
+    """
+    if loc.ndim > 1:
+        locHomogenous = np.hstack((loc, np.ones((loc.shape[0], 1))))
+        loc_tr = np.transpose(locHomogenous)
+        loc_tr = np.matmul(Hinv, loc_tr)  # to camera frame
+        locXYZ = np.transpose(loc_tr/loc_tr[2])  # to pixels (from millimeters)
+        return locXYZ[:, :2].astype(int)
+    else:
+        locHomogenous = np.hstack((loc, 1))
+        locHomogenous = np.dot(Hinv, locHomogenous)  # to camera frame
+        locXYZ = locHomogenous / locHomogenous[2]  # to pixels (from millimeters)
+        return locXYZ[:2].astype(int)
 
 
 def _visualize_trajlet_on_frame(trajlet, bg_im, homog, color_rgb=RED_COLOR, width=2):
@@ -40,7 +58,6 @@ def retrieve_bg_image(ds_name, opentraj_root, timestamp=-1):
         homog_file = os.path.join(opentraj_root, "datasets/ETH/seq_eth/H.txt")
         homog = np.linalg.inv(np.loadtxt(homog_file))
 
-
     elif ds_name == 'ETH-Hotel':
         # bg_frame_file = os.path.join(opentraj_root, "datasets/ETH/seq_hotel/bg.png")
         # bg_frame = cv2.imread(bg_frame_file)
@@ -60,7 +77,6 @@ def retrieve_bg_image(ds_name, opentraj_root, timestamp=-1):
         cap.set(cv2.CAP_PROP_POS_FRAMES, int(timestamp * 25))
         _, bg_frame = cap.read()
 
-
         homog_file = os.path.join(opentraj_root, "datasets/UCY/zara01/H-cam.txt")
         homog = np.linalg.inv(np.loadtxt(homog_file))
 
@@ -69,7 +85,8 @@ def retrieve_bg_image(ds_name, opentraj_root, timestamp=-1):
     elif ds_name == 'UCY-Univ':
         return None, None
 
-    # elif ds_name == 'PETS-S2l1':
+    elif ds_name == 'PETS-S2l1':
+        return None, None
 
     elif ds_name == 'SDD-coupa':
         return None, None
@@ -142,7 +159,6 @@ def retrieve_bg_image(ds_name, opentraj_root, timestamp=-1):
         homog = np.array([[100, 0, 0],
                           [0, 100, 0],
                           [0, 0, 1]])
-
 
         # homog = np.array([[100, 0, 240],
         #                   [0, 100, 720],

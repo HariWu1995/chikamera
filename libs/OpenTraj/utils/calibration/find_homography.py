@@ -88,12 +88,12 @@ def reset_points():
     update_flag = True
 
 
-'''
-   Usage Example: 
-   cd OpenTraj/tools
-   find_homography.py --src '../GC/reference.jpg' --dst '../GC/plan.png' --dst-scale 0.06
-'''
 if __name__ == '__main__':
+    '''
+    Usage:
+        cd OpenTraj/tools
+        find_homography.py --src '../GC/reference.jpg' --dst '../GC/plan.png' --dst-scale 0.06
+    '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--src', default='', type=str)
     parser.add_argument('--dst', default='', type=str)

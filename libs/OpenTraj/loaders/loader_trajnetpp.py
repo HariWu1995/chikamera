@@ -1,28 +1,31 @@
-from collections import defaultdict
-import itertools
 import json
 import random
+import itertools
+from collections import namedtuple
+from collections import defaultdict
 
 import numpy as np
 
 # from .data import SceneRow, TrackRow
 
-from collections import namedtuple
 
 TrackRow = namedtuple('Row', ['frame', 'pedestrian', 'x', 'y', 'prediction_number', 'scene_id'])
 TrackRow.__new__.__defaults__ = (None, None, None, None, None, None)
+
 SceneRow = namedtuple('Row', ['scene', 'pedestrian', 'start', 'end', 'fps', 'tag'])
 SceneRow.__new__.__defaults__ = (None, None, None, None, None, None)
 
 
 class TrajnetplusplusLoader(object):
-    """Read trajnet files.
+    """
+    Read trajnet files.
 
     :param scene_type: None -> numpy.array, 'rows' -> TrackRow and SceneRow, 'paths': grouped rows (primary pedestrian first), 'tags': numpy.array and scene tag
     :param image_file: Associated image file of the scene
     """
     def __init__(self, input_file, scene_type=None, image_file=None):
-        if scene_type is not None and scene_type not in {'rows', 'paths', 'tags'}:
+        if scene_type is not None \
+        and scene_type not in {'rows', 'paths', 'tags'}:
             raise Exception('scene_type not supported')
         self.scene_type = scene_type
 
@@ -38,15 +41,19 @@ class TrajnetplusplusLoader(object):
 
                 track = line.get('track')
                 if track is not None:
-                    row = TrackRow(track['f'], track['p'], track['x'], track['y'], \
-                                   track.get('prediction_number'), track.get('scene_id'))
+                    row = TrackRow(track['f'], track['p'], 
+                                   track['x'], track['y'], \
+                                   track.get('prediction_number'), 
+                                   track.get('scene_id'))
                     self.tracks_by_frame[row.frame].append(row)
                     continue
 
                 scene = line.get('scene')
                 if scene is not None:
-                    row = SceneRow(scene['id'], scene['p'], scene['s'], scene['e'], \
-                                   scene.get('fps'), scene.get('tag'))
+                    row = SceneRow(scene['id'], scene['p'], 
+                                   scene['s'], scene['e'], \
+                                   scene.get('fps'), 
+                                   scene.get('tag'))
                     self.scenes_by_id[row.scene] = row
 
     def scenes(self, randomize=False, limit=0, ids=None, sample=None):
@@ -72,7 +79,6 @@ class TrajnetplusplusLoader(object):
                 primary_path.append(row)
                 continue
             other_paths[row.pedestrian].append(row)
-
         return [primary_path] + list(other_paths.values())
 
     @staticmethod
@@ -124,3 +130,12 @@ class TrajnetplusplusLoader(object):
 
         # return a numpy array
         return scene_id, self.paths_to_xy(paths)
+
+
+if __name__ == '__main__':
+    data_root = "F:/__Datasets__/OpenTraj/TrajNet++"
+    data_fpath = f"{data_root}/train/synth_data/orca_circle_crossing_5ped.ndjson"
+
+    dataloader = TrajnetplusplusLoader(data_fpath)
+    _, paths_to_xy = dataloader.scene(0)
+    print(paths_to_xy.shape)

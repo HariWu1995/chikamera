@@ -3,7 +3,8 @@
 
 import numpy as np
 import pandas as pd
-from opentraj.toolkit.core.trajdataset import TrajDataset
+
+from ..core.trajdataset import TrajDataset
 
 
 def load_trajnet(path, **kwargs):
@@ -20,8 +21,8 @@ def load_trajnet(path, **kwargs):
     # FIXME: in the cases you load more than one file into a TrajDataset Object
 
     # rearrange columns
-    traj_dataset.data[["frame_id", "agent_id", "pos_x", "pos_y"]] = \
-        raw_dataset[["frame_id", "agent_id", "pos_x", "pos_y"]]
+    traj_columns = ["frame_id", "agent_id", "pos_x", "pos_y"]
+    traj_dataset.data[traj_columns] = raw_dataset[traj_columns]
     
     traj_dataset.data["scene_id"] = kwargs.get("scene_id", 0)
     traj_dataset.data["label"] = "pedestrian"
@@ -33,8 +34,17 @@ def load_trajnet(path, **kwargs):
         fps = 16
     else:
         fps = 7
+
     sampling_rate = kwargs.get('sampling_rate', 1)
     use_kalman = kwargs.get('use_kalman', False)
-    traj_dataset.postprocess(fps=fps, sampling_rate=sampling_rate, use_kalman=use_kalman)
 
+    traj_dataset.postprocess(fps=fps, sampling_rate=sampling_rate, use_kalman=use_kalman)
     return traj_dataset
+
+
+if __name__ == '__main__':
+    dataroot = "F:/__Datasets__/OpenTraj/TrajNet"
+    dataset = load_trajnet(f"{dataroot}//Train/biwi/biwi_hotel.txt")
+    print(dataset.get_agent_ids())
+
+

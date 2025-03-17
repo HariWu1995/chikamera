@@ -3,29 +3,37 @@
 
 import os
 import sys
-import math
-import scipy
-import numpy as np
-import pandas as pd
 import argparse
 from tqdm import tqdm
+
+from functools import partial
+from itertools import repeat
 import multiprocessing as mp
-from scipy.interpolate import interp1d
-from scipy.stats import multivariate_normal
-from sklearn.mixture import GaussianMixture
-from sklearn.neighbors import KernelDensity
-import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
+
+import math
+import numpy as np
+import pandas as pd
 import seaborn as sns
 
-from toolkit.core.trajdataset import TrajDataset
-from toolkit.core.trajlet import split_trajectories
-from toolkit.test.load_all import get_datasets, all_dataset_names, get_trajlets
+import scipy
+from scipy.interpolate import interp1d
+from scipy.stats import multivariate_normal
 
+from sklearn.mixture import GaussianMixture
+from sklearn.neighbors import KernelDensity
+
+import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+
+from ..core.trajlet import split_trajectories
+from ..core.trajdataset import TrajDataset
+from ..loaders.loader_all import get_trajlets
 
 
 def draw_ellipse(position, covariance, ax=None, **kwargs):
-    """Draw an ellipse with a given position and covariance"""
+    """
+    Draw an ellipse with a given position and covariance
+    """
     ax = ax or plt.gca()
 
     # Convert covariance to principal axes
@@ -39,8 +47,7 @@ def draw_ellipse(position, covariance, ax=None, **kwargs):
 
     # Draw the Ellipse
     for nsig in range(1, 4):
-        ax.add_patch(Ellipse(position, nsig * width, nsig * height,
-                             angle, **kwargs))
+        ax.add_patch(Ellipse(position, nsig * width, nsig * height, angle, **kwargs))
 
 
 def plot_gmm(gmm, X, label=True, ax=None):
@@ -61,6 +68,7 @@ def Gauss_K(x, y, h):
     N = len(x)
     return math.exp(-np.linalg.norm(x - y) ** 2 / (2 * h ** 2)) / (2 * math.pi*h**2)**N
 
+
 # Separates every trajectory in its observed and predicted trajlets
 def obs_pred_trajectories(trajectories, separator=8, f_per_traj=20):
     N_t = len(trajectories)
@@ -75,20 +83,22 @@ def obs_pred_trajectories(trajectories, separator=8, f_per_traj=20):
 # Weights for the GMM
 def weights(Xm, k, h, Tobs=8, Tpred=12):
     N_t = len(Xm)
+
     aux = 0
     for idx in range(N_t):
         aux += Gauss_K(Xm[k], Xm[idx], h)
+
     w = []
     for idx in range(N_t):
         var = Gauss_K(Xm[k], Xm[idx], h) / aux
         w.append(var)
-
     return np.array(w)
 
 
 def get_sample(Xp, w, M, h):
-    probabilities = w / np.sum(w)
-    l_sample = np.random.choice(range(len(Xp)), M, p=probabilities)
+    probs = w / np.sum(w)
+    l_sample = np.random.choice(range(len(Xp)), M, p=probs)
+
     sample = []
     for i in l_sample:
         sample.append(Xp[i])
@@ -119,8 +129,7 @@ def entropy(Xp, k, h, w, M):
     #                      samples.shape[1] * samples.shape[2]])
 
     # Calculate number of clusters
-    num_clusters = find_number_of_clusters(X, plot=False,
-                                           max_clusters=31)
+    num_clusters = find_number_of_clusters(X, plot=False, max_clusters=31)
 
     return num_clusters
 
@@ -170,28 +179,26 @@ def entropies_set(opentraj_root, datasets_name, M=30):
 
     entropy_values_set = {}
     for name in trajectories_set:
-        trajlet_entropy_file = os.path.join(entropies_dir,
-                                            name + str(M) + '-entropy.npy')
+        trajlet_entropy_file = os.path.join(entropies_dir, name + str(M) + '-entropy.npy')
         if os.path.exists(trajlet_entropy_file):
             entropy_values = np.load(trajlet_entropy_file)
-            print("loading entropies from: ", trajlet_entropy_file)
+            print("loading entropies from:", trajlet_entropy_file)
         else:
-            entropy_values = get_entropies(opentraj_root,
-                                           trajectories_set[name],
-                                           name, M)
+            entropy_values = get_entropies(opentraj_root, trajectories_set[name], name, M)
             np.save(trajlet_entropy_file, entropy_values)
             print("writing entropies ndarray into: ", trajlet_entropy_file)
         entropy_values_set.update({name: entropy_values})
+
     return entropy_values_set
 
 
-def plot_eth(X, clusters, t):
+def plot_eth(X, clusters, t, opentraj_root, output_dir):
     # Load reference image - ETH
-    img_path = sys.argv[1] + '/datasets/UCY/students03/reference.png'
+    img_path = f'{opentraj_root}/UCY/students03/reference.png'
     img = plt.imread(img_path)
 
     # Homography matrix path
-    H_path = sys.argv[1] + '/datasets/UCY/students03/H.txt'
+    H_path = f'{opentraj_root}/UCY/students03/H.txt'
     H = np.loadtxt(H_path)
     Hinv = np.linalg.inv(H)
 
@@ -206,11 +213,11 @@ def plot_eth(X, clusters, t):
     # Fit GMM model to sample
     gmm = GaussianMixture(n_components=clusters).fit(X)
     labels = gmm.predict(X)
+
     plt.imshow(img)
-    plt.scatter(x, y, c=labels,
-                s=10, cmap='viridis')
+    plt.scatter(x, y, c=labels, s=10, cmap='viridis')
     plt.title('Sample at t = {:.2f}'.format(t))
-    plt.savefig(sys.argv[2] + '/clusters_t={:.2f}.png'.format(t))
+    plt.savefig(f'{output_dir}/clusters_t={t:.2f}.png')
     plt.close()
 
 
@@ -268,17 +275,20 @@ def get_sample_at_time(time, trajlets, interpolation=None, plot=True):
     if interpolation is None:
         interpolation = new_interpolation
 
-    return (np.array([sample_x, sample_y], dtype=np.float32).T,
-            np.array(trajectories),
-            interpolation)
+    return (
+        np.array([sample_x, sample_y], dtype=np.float32).T,
+        np.array(trajectories),
+        interpolation
+    )
 
 
 def find_number_of_clusters(X, plot=True, max_clusters=21):
     # Find number of clusters
     n_components = np.arange(1, min(X.shape[0], max_clusters))
-    models = [GaussianMixture(n, covariance_type='full',
-                              random_state=0).fit(X)
-              for n in n_components]
+    models = [
+        GaussianMixture(n, covariance_type='full', random_state=0).fit(X)
+                    for n in n_components
+    ]
 
     if plot:
         plt.plot(n_components, [m.bic(X) for m in models], label='BIC')
@@ -306,8 +316,9 @@ def fit_GMM(X, max_clusters=21):
     return clusters, labels
 
 
-def analyze_trajlets(trajlets, ds_name, max_clusters=21,
-                     bandwidth=0.2, plot=False):
+def analyze_trajlets(trajlets, ds_name, opentraj_root, output_dir,
+                    max_clusters=21, bandwidth=0.2, plot=False):
+
     # Detect number of clusters for each time
     times = np.arange(0.0, 1.0, .02)
     num_clusters = []
@@ -318,29 +329,25 @@ def analyze_trajlets(trajlets, ds_name, max_clusters=21,
 
         # When no interpolation
         if interpolation is None:
-            X, _, interpolation =\
+            X, _, interpolation = \
                 get_sample_at_time(t, trajlets, plot=False)
         else:
-            X, _, interpolation =\
-                get_sample_at_time(t, trajlets,
-                                   interpolation=interpolation,
-                                   plot=False)
+            X, _, interpolation = \
+                get_sample_at_time(t, trajlets, interpolation=interpolation, plot=False)
 
         # Find number of clusters
-        clusters = find_number_of_clusters(X,
-                                           max_clusters=max_clusters,
-                                           plot=False)
+        clusters = find_number_of_clusters(X, max_clusters=max_clusters, plot=False)
         num_clusters.append(clusters)
 
         # Plot GMM fit
         if plot and ds_name == 'UCY-Univ3':
-            plot_eth(X, clusters, t)
+            plot_eth(X, clusters, t, opentraj_root, output_dir)
 
         # Calculate entropy
         # estimate pdf using KDE with gaussian kernel
         kde = KernelDensity(kernel='gaussian', bandwidth=bandwidth).fit(X)
-        log_p = kde.score_samples(X)  # returns log(p) of data sample
-        p = np.exp(log_p)             # estimate p of data sample
+        log_p = kde.score_samples(X)
+        p = np.exp(log_p)
 
         # Normalize p
         p = p / np.sum(p)
@@ -350,70 +357,70 @@ def analyze_trajlets(trajlets, ds_name, max_clusters=21,
         entropy.append(ent)
 
     # Plot estimated
-    print('Times : ', times)
-    print('Number of clusters :', num_clusters)
-    print('Entropy :', entropy)
+    df = pd.DataFrame(data=dict(times=times, num_clusters=num_clusters, entropy=entropy))
+    print(ds_name)
+    print(df)
 
     return times, num_clusters, entropy
 
 
-def analyze_dataset_loop(arguments, opentraj_root):
-    ds_name, trajlets = arguments
+def analyze_dataset_loop(inputs, opentraj_root, output_dir):
+    ds_name, trajlets = inputs
 
     # Folder of numpy files
-    print(opentraj_root)
-    global_dir = os.path.join(opentraj_root, 'global')
+    global_dir = os.path.join(output_dir, 'global')
     if not os.path.exists(global_dir):
         os.makedirs(global_dir)
 
     # Load or calculate indicators
-    trajlet_global_file = os.path.join(global_dir, ds_name + '-global.npy')
+    trajlet_global_file = os.path.join(global_dir, f'{ds_name}-global.npy')
     if os.path.exists(trajlet_global_file):
         global_values = np.load(trajlet_global_file)
-        print("loading global indicators from: ", trajlet_global_file)
+        print("loading global indicators from:", trajlet_global_file)
     else:
         # Get global number of clusters
-        times, num_clusters, entropy =\
-            analyze_trajlets(trajlets, ds_name, plot=False)
+        times, num_clusters, \
+            entropy = analyze_trajlets(trajlets, ds_name, 
+                                        opentraj_root, output_dir, plot=False)
         global_values = np.array([times, num_clusters, entropy])
 
         # Save calculated values
         np.save(trajlet_global_file, global_values)
-        print("writing global indicators ndarray into: ", trajlet_global_file)
+        print("writing global indicators into:", trajlet_global_file)
 
-    return (global_values[0, :], global_values[1, :], global_values[2, :])
+    return (global_values[0, :], 
+            global_values[1, :], 
+            global_values[2, :])
 
 
-def run(trajlets, opentraj_root, output_dir):
+def run(trajlets, output_dir, opentraj_root, run_parallel: bool = False):
     dataset_names = list(trajlets.keys())
 
     # Map indices
-    arguments = [(ds_name, trajlets[ds_name])
-                 for ds_name in dataset_names]
+    arguments = [(ds_name, trajlets[ds_name]) for ds_name in dataset_names]
+    kwarguments = dict(opentraj_root=opentraj_root, output_dir=output_dir)
 
-    if args.execution == 'normal':
-        # Analyze datasets (normal)
-        results = [analyze_dataset_loop(arg, opentraj_root)
-                   for arg in arguments]
-    elif args.execution == 'parallelized':
-        # Analyze datasets (parallelized)
-        pool = mp.Pool(mp.cpu_count() - 2)
-        results = pool.map(analyze_dataset_loop, arguments)
+    # Analyze datasets
+    if run_parallel:
+        n_workers = mp.cpu_count() // 2
+        pool = mp.Pool(n_workers)
+        results = pool.map(partial(analyze_dataset_loop, **kwarguments), arguments)
         pool.close()
+    else:
+        results = [analyze_dataset_loop(arg, **kwarguments) for arg in arguments]
 
     # Construct dataframe
-    df = pd.DataFrame()
+    df = []
     for ds_name, res in zip(dataset_names, results):
         times, num_clusters, entropy = res
         df_i = pd.DataFrame({'title': ds_name,
                              'times': times,
-                             'num_clusters': num_clusters,
+                        'num_clusters': num_clusters,
                              'entropy': entropy})
+        df.append(df_i)
+    df = pd.concat(df)
 
-        df = df.append(df_i)
-
-    print("making motion plots ...")
-
+    print("\nVisualizing ...")
     sns.set(style="whitegrid")
     fig = plt.figure(figsize=(12, 5))
 
@@ -432,27 +439,16 @@ def run(trajlets, opentraj_root, output_dir):
     ax2.xaxis.set_tick_params(labelsize=8)
 
     plt.subplots_adjust(wspace=0, hspace=.1)
-
-    plt.savefig(os.path.join(output_dir, "filename.pdf"),
-                bbox_inches='tight', pad_inches=0)
+    plt.savefig(os.path.join(output_dir, "global.png"), bbox_inches='tight', pad_inches=0)
     plt.show()
 
 
 if __name__ == "__main__":
-    # Parser arguments
-    parser = argparse.ArgumentParser(description='Calculate global '
-                                                 'multimodality indicators.')
-    parser.add_argument('--opentraj_root', '--root')
-    parser.add_argument('--output_dir', '--output')
-    parser.add_argument('--execution', '--exe',
-                        default='normal',
-                        choices=['normal', 'parallelized'],
-                        help='pick a execution (default: "vae")')
-    args = parser.parse_args()
 
-    # Dataset names
-    dataset_names = all_dataset_names
+    opentraj_root = "F:/__Datasets__/OpenTraj"
+    output_dir = "./temp/benchmark/multi_modality"
+    if os.path.isdir(output_dir) is False:
+        os.makedirs(output_dir)
 
-    # Get trajectories
-    trajlets = get_trajlets(args.opentraj_root, dataset_names)
-    run(trajlets, args.opentraj_root, args.output_dir)
+    trajlets = get_trajlets(opentraj_root)
+    run(trajlets, output_dir, opentraj_root, run_parallel=True)

@@ -3,11 +3,13 @@
 
 import cv2
 import pathlib
+
 import numpy as np
 import pandas as pd
 
 from scipy.spatial.transform import Rotation
-from toolkit.core.trajdataset import TrajDataset
+
+from ..core.trajdataset import TrajDataset
 
 
 def read_projection_parameters(path):
@@ -51,7 +53,7 @@ def read_projection_parameters(path):
     return rvec, tvec, cameraMatrix, distCoeffs
 
 
-def obtainObjectPoints(pts, rvec, tvec, cameraMatrix, distCoeffs):
+def obtain_object_points(pts, rvec, tvec, cameraMatrix, distCoeffs):
     # Obtain variables values
     dim_0 = pts.shape[0]
 
@@ -83,15 +85,15 @@ def obtainObjectPoints(pts, rvec, tvec, cameraMatrix, distCoeffs):
     return unprojPts
 
 
-def load_town_center(path, **kwargs):
+def load_town(path, **kwargs):
     # Construct dataset
     traj_dataset = TrajDataset()
 
-    # Note: we assume here that the path that is passed is the one to the tracks CSV.
     # Read the tracks
     raw_dataset = pd.read_csv(path, sep=",", header=0,
-                              names=["personNumber", "frameNumber", "headValid", "bodyValid", "headLeft", "headTop",
-                                     "headRight", "headBottom", "bodyLeft", "bodyTop", "bodyRight", "bodyBottom"])
+                                    names=["personNumber", "frameNumber", "headValid", "bodyValid", 
+                                           "headLeft", "headTop", "headRight", "headBottom", 
+                                           "bodyLeft", "bodyTop", "bodyRight", "bodyBottom"])
 
     # Get bottom (feet) of bounding boxes
     raw_dataset["body_x"] = (raw_dataset["bodyLeft"] + raw_dataset["bodyRight"]) / 2.0
@@ -105,13 +107,12 @@ def load_town_center(path, **kwargs):
 
     # Read camera calibration
     calibration_path = kwargs.get('calib_path', 'none')
-    rvec, tvec, cameraMatrix, distCoeffs =\
-        read_projection_parameters(calibration_path)
+    rvec, tvec, cameraMatrix, \
+                distCoeffs = read_projection_parameters(calibration_path)
 
     # Obtain real world coordinates from image
     pts = np.array([raw_dataset["body_x"], raw_dataset["body_y"]]).T
-    objPts = obtainObjectPoints(pts, rvec, tvec,
-                                cameraMatrix, distCoeffs)
+    objPts = obtain_object_points(pts, rvec, tvec, cameraMatrix, distCoeffs)
 
     # Add object points to raw dataset
     raw_dataset['pos_x'] = objPts[:, 0]
@@ -123,44 +124,46 @@ def load_town_center(path, **kwargs):
 
     # Copy columns
     traj_dataset.data[["frame_id", "agent_id", "pos_x", "pos_y"]] = \
-        raw_dataset[["frameNumber", "personNumber", "pos_x", "pos_y"]]
+    raw_dataset[["frameNumber", "personNumber", "pos_x", "pos_y"]]
 
-    # FixMe: for debug
+    # FIXME: for debug
     traj_dataset.data[["body_x", "body_y"]] = \
-        raw_dataset[["body_x", "body_y"]].astype(int)
+          raw_dataset[["body_x", "body_y"]].astype(int)
 
     # Recording information
     traj_dataset.title = kwargs.get('title', "Town-Center")
     traj_dataset.data["label"] = "pedestrian"
+    traj_dataset.data["scene_id"] = 0
 
     # post-process
     fps = kwargs.get('fps', 25)
     sampling_rate = kwargs.get('sampling_rate', 1)
     use_kalman = kwargs.get('use_kalman', False)
-    traj_dataset.postprocess(fps=fps, sampling_rate=sampling_rate, use_kalman=use_kalman)
 
+    traj_dataset.postprocess(fps=fps, sampling_rate=sampling_rate, use_kalman=use_kalman)
     return traj_dataset
 
 
 if __name__ == "__main__":
-    import sys, os, cv2
-    towncenter_root = sys.argv[1]
 
-    traj_ds = load_town_center(towncenter_root + '/TownCentre-groundtruth-top.txt',
-                               calib_path=towncenter_root + '/TownCentre-calibration-ci.txt',
-                               # use_kalman=True,
-                               sampling_rate=10
-                               )
+    dataroot = "F:/__Datasets__/OpenTraj/Town-Center"
 
-    video_address = os.path.join(towncenter_root, 'TownCentreXVID.avi')
-    cap = cv2.VideoCapture(video_address)
+    traj_ds = load_town(path = f'{dataroot}/TownCentre-groundtruth-top.txt',
+                    calib_path = f'{dataroot}/TownCentre-calibration-ci.txt',
+                        # use_kalman = True,
+                        sampling_rate = 10)
 
     traj_groups = traj_ds.get_trajectories()
     trajs = [g for _, g in traj_groups]
 
     for ii, traj in enumerate(trajs):
-        dur = traj["timestamp"].iloc[-1] - traj["timestamp"].iloc[0]
-        print("duration of traj %d is %.2f(s)" % (ii, dur))
+        dur = traj["frame_id"].iloc[-1] - traj["frame_id"].iloc[0]
+        print("duration of traj %d is %d (frames)" % (ii, dur))
+
+    quit()
+
+    video_address = os.path.join(dataroot, 'TownCentreXVID.avi')
+    cap = cv2.VideoCapture(video_address)
 
     frame_id = -1
     while True:

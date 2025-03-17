@@ -62,11 +62,13 @@ def play(parser, Hinv, media_file):
             # fetch entire trajectory
             traj_i = parser.id_p_dict[id]
             TRAJ_i = to_image_frame(Hinv, traj_i)
+
             line_cv(ref_im_copy, TRAJ_i, (255, 255, 0), 2)
             cv2.circle(ref_im_copy, (UV_i[1], UV_i[0]), 5, (0, 0, 255), 2)
 
         cv2.putText(ref_im_copy, '%d' % t, (30, 80), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 3)
         cv2.imshow('OpenTraj (Press ESC for exit)', ref_im_copy)
+
         delay_ms = 100
         key = cv2.waitKey(delay_ms * (1-pause)) & 0xFF
         if key == 27:     # press ESCAPE to quit
@@ -76,7 +78,10 @@ def play(parser, Hinv, media_file):
 
 
 if __name__ == '__main__':
-    opentraj_path = '/home/cyrus/workspace2/OpenTraj'  # FIXME
+
+    # FIXME
+    opentraj_path = '/home/cyrus/workspace2/OpenTraj'  
+
     # #============================ ETH =================================
     # parser = ParserETH()
 
@@ -110,8 +115,8 @@ if __name__ == '__main__':
 
     annot_file = os.path.join(opentraj_path, 'UCY/st3_dataset/obsmat.txt')
     homog_file = os.path.join(opentraj_path, 'UCY/st3_dataset/H.txt')
-    # media_file = os.path.join(opentraj_path, 'UCY/st3_dataset/reference.png')
     media_file = os.path.join(opentraj_path, 'UCY/st3_dataset/video.avi')
+    # media_file = os.path.join(opentraj_path, 'UCY/st3_dataset/reference.png')
 
     # #============================ SDD =================================
     # parser = ParserSDD()
@@ -133,6 +138,8 @@ if __name__ == '__main__':
 
     parser.load(annot_file)
     n_peds = len(parser.id_p_dict.keys())
+
     Homog = (np.loadtxt(homog_file)) if os.path.exists(homog_file) else np.eye(3)
     Hinv = np.linalg.inv(Homog)
+
     play(parser, Hinv, media_file)

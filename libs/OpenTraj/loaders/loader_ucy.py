@@ -1,20 +1,24 @@
 # Author: From TrajNet++
 # Email: amiryan.j@gmail.com
-
-from collections import namedtuple
 import os
+from collections import namedtuple
+
 import numpy as np
 import pandas as pd
+
 import scipy.interpolate
 
-from toolkit.core.trajdataset import TrajDataset
+from ..core.trajdataset import TrajDataset
+
 
 TrackRow = namedtuple('Row', ['frame', 'pedestrian', 'x', 'y', 'prediction_number', 'scene_id'])
 TrackRow.__new__.__defaults__ = (None, None, None, None, None, None)
+
 # SceneRow = namedtuple('Row', ['scene', 'pedestrian', 'start', 'end', 'fps', 'tag'])
 
 
 class CrowdLoader:
+
     def __init__(self, homog=[]):
         if len(homog):
             self.homog = homog
@@ -22,8 +26,9 @@ class CrowdLoader:
             self.homog = np.eye(3)
 
     def to_world_coord(self, homog, loc):
-        """Given H^-1 and world coordinates, returns (u, v) in image coordinates."""
-       
+        """
+        Given H^-1 and world coordinates, returns (u, v) in image coordinates.
+        """
         locHomogenous = np.hstack((loc, np.ones((loc.shape[0], 1))))
         loc_tr = np.transpose(locHomogenous)
         loc_tr = np.matmul(homog, loc_tr)  # to camera frame
@@ -46,7 +51,7 @@ class CrowdLoader:
         fs = np.array([f for _, _, f in person_xyf])
 
         kind = 'linear'
-        #if len(fs) > 5:
+        # if len(fs) > 5:
         #    kind = 'cubic'
 
         x_fn = scipy.interpolate.interp1d(fs, xs, kind=kind)
@@ -64,10 +69,9 @@ class CrowdLoader:
             pedestrians = []
             current_pedestrian = []
         
-
             for line in whole_file.split('\n'):
-                if '- Num of control points' in line or \
-                '- the number of splines' in line:
+                if '- Num of control points' in line \
+                or '- the number of splines' in line:
                     if current_pedestrian:
                         pedestrians.append(current_pedestrian)
                     current_pedestrian = []
@@ -91,12 +95,11 @@ class CrowdLoader:
         return [row for i, p in enumerate(pedestrians) for row in self.crowds_interpolate_person(i, p)]
 
 
-def load_crowds(path, **kwargs):
+def load_ucy(path, **kwargs):
     """
-        Note: pass the homography matrix as well
-        :param path: string, path to folder
+    Note: pass the homography matrix as well
+    :param path: string, path to folder
     """
-
     homog_file = kwargs.get("homog_file", "")
     Homog = (np.loadtxt(homog_file)) if os.path.exists(homog_file) else np.eye(3)
     raw_dataset = pd.DataFrame()
@@ -110,70 +113,78 @@ def load_crowds(path, **kwargs):
     traj_dataset = TrajDataset()
 
     traj_dataset.title = kwargs.get('title', "Crowds")
+
     # copy columns
-    traj_dataset.data[["frame_id", "agent_id",  "pos_x", "pos_y"]] = \
-        raw_dataset[["frame_id", "agent_id", "pos_x", "pos_y"]]
+    columns = ["frame_id", "agent_id",  "pos_x", "pos_y"]
+    traj_dataset.data[columns] = raw_dataset[columns]
 
     traj_dataset.data["scene_id"] = kwargs.get('scene_id', 0)
     traj_dataset.data["label"] = "pedestrian"
 
     # post-process
     fps = kwargs.get('fps', 25)
-
     sampling_rate = kwargs.get('sampling_rate', 1)
     use_kalman = kwargs.get('use_kalman', False)
-    traj_dataset.postprocess(fps=fps, sampling_rate=sampling_rate, use_kalman=use_kalman)
 
+    traj_dataset.postprocess(fps=fps, sampling_rate=sampling_rate, use_kalman=use_kalman)
     return traj_dataset
 
 
 # test
 if __name__ == "__main__":
-    import os, sys
+
     import matplotlib.pyplot as plt
-    OPENTRAJ_ROOT = sys.argv[1]
+    
+    OPENTRAJ_ROOT = "F:/__Datasets__/OpenTraj/UCY"
 
     # Zara data
     # =================================
-    zara_01_vsp = os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/zara01/annotation.vsp')
-    zara_hmg_file = os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/zara01/H.txt')
-    zara_01_ds = load_crowds(zara_01_vsp, use_kalman=False, homog_file=zara_hmg_file)
+    zara_01_vsp = f'{OPENTRAJ_ROOT}/zara01/annotation.vsp'
+    zara_hmg_file = f'{OPENTRAJ_ROOT}/zara01/H.txt'
+    zara_01_ds = load_ucy(zara_01_vsp, use_kalman=False, homog_file=zara_hmg_file)
+
     # trajs = zara_01_ds.get_trajectories()
     # trajs = [g for _, g in trajs]
+
     trajs = zara_01_ds.data.groupby(["scene_id", "agent_id"])
     trajs = [(scene_id, agent_id, tr) for (scene_id, agent_id), tr in trajs]
 
     samples = zara_01_ds.get_entries()
     plt.scatter(samples["pos_x"], samples["pos_y"])
     plt.show()
-    zara_02_vsp = os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/zara02/annotation.vsp')
-    zara_02_ds = load_crowds(zara_02_vsp, homog_file=zara_hmg_file)
-    # zara_02_video = os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/zara02/video.avi')
 
-    zara_03_vsp = os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/zara03/annotation.vsp')
-    zara_03_ds = load_crowds(zara_03_vsp, homog_file=zara_hmg_file)
+    zara_02_vsp = f'{OPENTRAJ_ROOT}/zara02/annotation.vsp'
+    zara_02_ds = load_ucy(zara_02_vsp, homog_file=zara_hmg_file)
+    # zara_02_video = f'{OPENTRAJ_ROOT}/zara02/video.avi'
+
+    zara_03_vsp = f'{OPENTRAJ_ROOT}/zara03/annotation.vsp'
+    zara_03_ds = load_ucy(zara_03_vsp, homog_file=zara_hmg_file)
 
     # University data
     # =================================
-    ucy_hmg_file = os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/students03', 'H.txt')
-    st001_ds = load_crowds(os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/students01', 'annotation.vsp'),
-                           homog_file=ucy_hmg_file, scene_id='st001', use_kalman=False)
+    ucy_hmg_file = os.path.join(OPENTRAJ_ROOT, 'zara01', 'H.txt')
+
+    st001_vsp = f'{OPENTRAJ_ROOT}/students01/annotation.vsp'
+    st001_ds = load_ucy(st001_vsp, homog_file=ucy_hmg_file, scene_id='st001', use_kalman=False)
+
     trajs = st001_ds.get_trajectories()
     for _, tr in trajs:
         plt.plot(tr["pos_x"], tr["pos_y"])
         # plt.scatter(tr["vel_x"], tr["vel_y"])
     plt.show()
 
-    st003_ds = load_crowds(os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/students03', 'annotation.vsp'),
-                           homog_file=ucy_hmg_file, scene_id='st003', use_kalman=False)
+    st003_vsp = f'{OPENTRAJ_ROOT}/students03/annotation.vsp'
+    st003_ds = load_ucy(st003_vsp, homog_file=ucy_hmg_file, scene_id='st003', use_kalman=False)
+    
     plt.figure()
     trajs = st003_ds.get_trajectories()
     for _, tr in trajs:
         plt.plot(tr["pos_x"], tr["pos_y"])
         # plt.scatter(tr["vel_x"], tr["vel_y"])
     plt.show()
-    uni_ex_ds = load_crowds(os.path.join(OPENTRAJ_ROOT, 'datasets/UCY/uni_examples', 'annotation.vsp'),
-                            homog_file=ucy_hmg_file, scene_id='uni-ex', use_kalman=False)
+
+    uni_ex_vsp = f'{OPENTRAJ_ROOT}/uni_examples/annotation.vsp'
+    uni_ex_ds = load_ucy(uni_ex_vsp, homog_file=ucy_hmg_file, scene_id='uni-ex', use_kalman=False)
 
     plt.figure()
     trajs = uni_ex_ds.get_trajectories()

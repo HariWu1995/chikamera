@@ -1,8 +1,10 @@
 # Author: Javad Amirian
 # Email: amiryan.j@gmail.com
 
-
 import numpy as np
+
+
+eps = 1E-2
 
 
 def split_trajectories(traj_groups, length=4.8, overlap=2., static_filter_thresh=1., to_numpy=False):
@@ -12,15 +14,15 @@ def split_trajectories(traj_groups, length=4.8, overlap=2., static_filter_thresh
     :param overlap:     min overlap duration between consequent trajlets
     :param static_filter_thresh:  if a trajlet is shorter than this thrshold, then it is static
     :param to_numpy: (bool) if True the result will be np.ndarray
+
     :return: list of Pandas DataFrames (all columns)
-             or Numpy ndarray(NxTx5): ["pos_x", "pos_y", "vel_x", "vel_y", "timestamp"]
+             or Numpy ndarray (N x T x 5): ["pos_x", "pos_y", "vel_x", "vel_y", "timestamp"]
     """
 
     trajlets = []
     trajs = [g for _, g in traj_groups]
     ts = trajs[0]["timestamp"]
     dt = ts.iloc[1] - ts.iloc[0]
-    eps = 1E-2
 
     for tr in trajs:
         if len(tr) < 2: continue
@@ -56,10 +58,10 @@ def split_trajectories_paired(traj_groups, length=4.8, overlap=2., static_filter
     :param overlap:     min overlap duration between consequent trajlets
     :param static_filter_thresh:  if a trajlet is shorter than this thrshold, then it is static
     :param to_numpy: (bool) if True the result will be np.ndarray
+    
     :return: list of Pandas DataFrames (all columns)
              or Numpy ndarray(Nx2xTx5): ["pos_x", "pos_y", "vel_x", "vel_y", "timestamp"]
     """
-
     trajlets = []
     trajs = [g for _, g in traj_groups]
     ts = trajs[0]["timestamp"]
@@ -91,14 +93,19 @@ def split_trajectories_paired(traj_groups, length=4.8, overlap=2., static_filter
     return trajlets
 
 
-# test
+
 if __name__ == "__main__":
-    from toolkit.loaders.loader_eth import load_eth
-    import sys, os
-    opentraj_root = sys.argv[1]
-    # test_dataset = loadETH(os.path.join(opentraj_root, "datasets/ETH/seq_eth/obsmat.txt"))
-    test_dataset = load_eth(os.path.join(opentraj_root, "datasets/ETH/seq_hotel/obsmat.txt"))
-    trajs = test_dataset.get_trajectories()
+
+    import os
+
+    from ..loaders.loader_eth import load_eth
+
+    opentraj_root = "F:/__Datasets__/OpenTraj"
+
+    # dataset = loadETH(os.path.join(opentraj_root, "ETH/seq_eth/obsmat.txt"))
+    dataset = load_eth(os.path.join(opentraj_root, "ETH/seq_hotel/obsmat.txt"))
+
+    trajs = dataset.get_trajectories()
     trajlets_4_8s = split_trajectories(trajs, length=4.8, to_numpy=True)
     trajlets_8s = split_trajectories(trajs, length=8, to_numpy=True)
     paired_trajlets_4_8s = split_trajectories_paired(trajs, length=4.8, to_numpy=True)
