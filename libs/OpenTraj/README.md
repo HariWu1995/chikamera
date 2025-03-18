@@ -46,9 +46,6 @@ source env/bin/activate
 cd [OpenTraj]
 pip install -r requirements.txt
 
-# run benchmarking (all indicators)
-python -m libs.OpenTraj.benchmark
-
 # exit the environment
 deactivate  # Exit virtual environment
 ``` 
