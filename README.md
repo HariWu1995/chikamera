@@ -180,6 +180,10 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
     - [Open3D](https://github.com/isl-org/Open3D) - [Visualization](https://www.open3d.org/docs/release/tutorial/visualization/visualization.html)
 
     - [Ultralytics](https://github.com/ultralytics/ultralytics)
+    <img src="https://github.com/ultralytics/docs/releases/download/0/ultralytics-yolov8-tasks-banner.avif">
+
+    - [Supervision](https://github.com/roboflow/supervision)
+    <img src="assets/supervision by roboflow - demo.gif">
 
 - 🔬 Algorithms:
 
