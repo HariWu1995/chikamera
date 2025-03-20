@@ -182,8 +182,14 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
     - [Ultralytics](https://github.com/ultralytics/ultralytics)
     <img src="https://github.com/ultralytics/docs/releases/download/0/ultralytics-yolov8-tasks-banner.avif">
 
-    - [Supervision](https://github.com/roboflow/supervision)
-    <img src="assets/supervision by roboflow - demo.gif">
+    - [Supervision](https://github.com/roboflow/supervision) by Roboflow
+    <img src="assets/roboflow_supervision - demo.gif">
+
+    - [Inference](https://github.com/roboflow/inference) by Roboflow
+    <img src="assets/roboflow_inference - workflow.jpg">
+
+    - [Super-Gradients](https://github.com/Deci-AI/super-gradients)
+    <img src="assets/supergradients - latency.png">
 
 - 🔬 Algorithms:
 
