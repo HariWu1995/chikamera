@@ -4,3 +4,4 @@ camtools[torch]
 ultralytics
 supervision[assets]
 # super-gradients # error with checkpoint loading
+# sklearn # to run scripts/advamples/sports_football
