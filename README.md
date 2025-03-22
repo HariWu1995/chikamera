@@ -175,9 +175,11 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
     - [CamTools](https://github.com/yxlao/camtools)
 
-    - [imageZMQ](https://github.com/jeffbass/imagezmq)
-
     - [Open3D](https://github.com/isl-org/Open3D) - [Visualization](https://www.open3d.org/docs/release/tutorial/visualization/visualization.html)
+    <img src="assets/open3d_components.jpg">
+
+    - [imageZMQ](https://github.com/jeffbass/imagezmq)
+    <img src="assets/imagezmq_example.jpg">
 
     - [Ultralytics](https://github.com/ultralytics/ultralytics)
     <img src="https://github.com/ultralytics/docs/releases/download/0/ultralytics-yolov8-tasks-banner.avif">
