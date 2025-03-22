@@ -12,7 +12,7 @@ FONT = cv2.FONT_HERSHEY_SIMPLEX
 class CourtKptDetector:
 
     def __init__(self, model_path: str):
-        self.model = models.resnet50(pretrained=True)
+        self.model = models.resnet50(pretrained=False)
         self.model.fc = torch.nn.Linear(self.model.fc.in_features, 14*2) 
         self.model.load_state_dict(
                         torch.load(model_path, map_location='cpu'))
