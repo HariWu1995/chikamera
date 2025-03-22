@@ -30,9 +30,7 @@ Tech report: https://arxiv.org/abs/1910.10093.
 
 You can find some research projects that are built on top of Torchreid `here <https://github.com/KaiyangZhou/deep-person-reid/tree/master/projects>`_.
 
-.. raw:: html
-    <details>
-    <summary>What's new</summary>
+.. admonition:: What's new
     - [Aug 2022] We have added model export capabilities to the following frameworks: ONNX, OpenVINO and TFLite. The export script can be found `here <https://github.com/KaiyangZhou/deep-person-reid/blob/master/tools/export.py>`_
     - [Aug 2021] We have released the ImageNet-pretrained models of ``osnet_ain_x0_75``, ``osnet_ain_x0_5`` and ``osnet_ain_x0_25``. The pretraining setup follows `pycls <https://github.com/facebookresearch/pycls/blob/master/configs/archive/imagenet/resnet/R-50-1x64d_step_8gpu.yaml>`_.
     - [Apr 2021] We have updated the appendix in the `TPAMI version of OSNet <https://arxiv.org/abs/1910.06827v5>`_ to include results in the multi-source domain generalization setting. The trained models can be found in the `Model Zoo <https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html>`_.
@@ -56,13 +54,11 @@ You can find some research projects that are built on top of Torchreid `here <ht
     - [Apr 2020] Upgraded to ``v1.2.0``. The engine class has been made more model-agnostic to improve extensibility. See `Engine <torchreid/engine/engine.py>`_ and `ImageSoftmaxEngine <torchreid/engine/image/softmax.py>`_ for more details. Credit to `Dassl.pytorch <https://github.com/KaiyangZhou/Dassl.pytorch>`_.
     - [Dec 2019] Our `OSNet paper <https://arxiv.org/pdf/1905.00953v6.pdf>`_ has been updated, with additional experiments (in section B of the supplementary) showing some useful techniques for improving OSNet's performance in practice.
     - [Nov 2019] ``ImageDataManager`` can load training data from target datasets by setting ``load_train_targets=True``, and the train-loader can be accessed with ``train_loader_t = datamanager.train_loader_t``. This feature is useful for domain adaptation research.
-    </details>
 
 Installation
 ---------------
 
 Make sure `conda <https://www.anaconda.com/distribution/>`_ is installed.
-
 
 .. code-block:: bash
 
@@ -89,8 +85,8 @@ Another way to install is to run everything inside docker container:
 - build: ``make build-image``
 - run: ``make run``
 
-Get started: 30 seconds to Torchreid
--------------------------------------
+Get started
+-----------
 1. Import ``torchreid``
 
 .. code-block:: python
