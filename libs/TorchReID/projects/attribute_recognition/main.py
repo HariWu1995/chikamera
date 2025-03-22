@@ -368,7 +368,7 @@ def test(model, testloader, attr_dict, use_gpu):
             txtfile.close()
 
     print(
-        '=> BatchTime(s)/BatchSize(img): {:.4f}/{}'.format(
+        '=> BatchTime(s)/batch_size(img): {:.4f}/{}'.format(
             batch_time.avg, args.batch_size
         )
     )
