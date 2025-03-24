@@ -10,10 +10,12 @@ import subprocess
 from torchreid.utils.feature_extractor import FeatureExtractor
 from torchreid.models import build_model
 
+
 __model_types = [
     'resnet50', 'mlfn', 'hacnn', 'mobilenetv2_x1_0', 'mobilenetv2_x1_4',
     'osnet_x1_0', 'osnet_x0_75', 'osnet_x0_5', 'osnet_x0_25',
     'osnet_ibn_x1_0', 'osnet_ain_x1_0']
+
 
 def file_size(path):
     # Return file/dir size (MB)
@@ -32,6 +34,7 @@ def get_model_name(model):
         if x in model:
             return x
     return None
+
 
 def export_formats():
     # YOLOv5 export formats

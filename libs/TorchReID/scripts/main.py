@@ -1,7 +1,9 @@
 import sys
 import time
+
 import os.path as osp
 import argparse
+
 import torch
 import torch.nn as nn
 
@@ -11,7 +13,7 @@ from torchreid.utils import (
     resume_from_checkpoint, load_pretrained_weights, compute_model_complexity
 )
 
-from default_config import (
+from .default_config import (
     imagedata_kwargs, optimizer_kwargs, videodata_kwargs, engine_run_kwargs,
     get_default_config, lr_scheduler_kwargs
 )
@@ -95,38 +97,14 @@ def check_cfg(cfg):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument(
-        '--config-file', type=str, default='', help='path to config file'
-    )
-    parser.add_argument(
-        '-s',
-        '--sources',
-        type=str,
-        nargs='+',
-        help='source datasets (delimited by space)'
-    )
-    parser.add_argument(
-        '-t',
-        '--targets',
-        type=str,
-        nargs='+',
-        help='target datasets (delimited by space)'
-    )
-    parser.add_argument(
-        '--transforms', type=str, nargs='+', help='data augmentation'
-    )
-    parser.add_argument(
-        '--root', type=str, default='', help='path to data root'
-    )
-    parser.add_argument(
-        'opts',
-        default=None,
-        nargs=argparse.REMAINDER,
-        help='Modify config options using the command-line'
-    )
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--config-file', type=str, default='', help='path to config file')
+    parser.add_argument('-s','--sources', type=str, nargs='+', help='source datasets (delimited by space)')
+    parser.add_argument('-t','--targets', type=str, nargs='+', help='target datasets (delimited by space)')
+    parser.add_argument('-tr','--transforms', type=str, nargs='+', help='data augmentation')
+    parser.add_argument('-r','--root', type=str, default='./', help='path to data root')
+    parser.add_argument('opts', default=None, nargs=argparse.REMAINDER, help='Modify config options using the command-line')
+
     args = parser.parse_args()
 
     cfg = get_default_config()
@@ -142,16 +120,18 @@ def main():
     log_name += time.strftime('-%Y-%m-%d-%H-%M-%S')
     sys.stdout = Logger(osp.join(cfg.data.save_dir, log_name))
 
+    print('*'*19)
     print('Show configuration\n{}\n'.format(cfg))
     print('Collecting env info ...')
     print('** System info **\n{}\n'.format(collect_env_info()))
+    print('*'*19)
 
     if cfg.use_gpu:
         torch.backends.cudnn.benchmark = True
 
     datamanager = build_datamanager(cfg)
 
-    print('Building model: {}'.format(cfg.model.name))
+    print('\n\nBuilding model: {}'.format(cfg.model.name))
     model = torchreid.models.build_model(
         name=cfg.model.name,
         num_classes=datamanager.num_train_pids,
@@ -159,10 +139,8 @@ def main():
         pretrained=cfg.model.pretrained,
         use_gpu=cfg.use_gpu
     )
-    num_params, flops = compute_model_complexity(
-        model, (1, 3, cfg.data.height, cfg.data.width)
-    )
-    print('Model complexity: params={:,} flops={:,}'.format(num_params, flops))
+    n_params, flops = compute_model_complexity(model, (1, 3, cfg.data.height, cfg.data.width))
+    print('\nModel complexity: #params = {:,} #flops = {:,}'.format(n_params, flops))
 
     if cfg.model.load_weights and check_isfile(cfg.model.load_weights):
         load_pretrained_weights(model, cfg.model.load_weights)
@@ -171,18 +149,14 @@ def main():
         model = nn.DataParallel(model).cuda()
 
     optimizer = torchreid.optim.build_optimizer(model, **optimizer_kwargs(cfg))
-    scheduler = torchreid.optim.build_lr_scheduler(
-        optimizer, **lr_scheduler_kwargs(cfg)
-    )
+    scheduler = torchreid.optim.build_lr_scheduler(optimizer, **lr_scheduler_kwargs(cfg))
 
     if cfg.model.resume and check_isfile(cfg.model.resume):
         cfg.train.start_epoch = resume_from_checkpoint(
             cfg.model.resume, model, optimizer=optimizer, scheduler=scheduler
         )
 
-    print(
-        'Building {}-engine for {}-reid'.format(cfg.loss.name, cfg.data.type)
-    )
+    print('\n\nBuilding {}-engine for {}-reid'.format(cfg.loss.name, cfg.data.type))
     engine = build_engine(cfg, datamanager, model, optimizer, scheduler)
     engine.run(**engine_run_kwargs(cfg))
 

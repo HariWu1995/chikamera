@@ -7,6 +7,7 @@ from .image import (
 from .video import PRID2011, Mars, DukeMTMCVidReID, iLIDSVID
 from .dataset import Dataset, ImageDataset, VideoDataset
 
+
 __image_datasets = {
     'market1501': Market1501,
     'cuhk03': CUHK03,
@@ -22,6 +23,7 @@ __image_datasets = {
     'university1652': University1652,
     'cuhksysu': CUHKSYSU
 }
+
 
 __video_datasets = {
     'mars': Mars,

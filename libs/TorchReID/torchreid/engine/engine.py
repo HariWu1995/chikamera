@@ -127,7 +127,7 @@ class Engine(object):
         visrank_topk=10,
         use_metric_cuhk03=False,
         ranks=[1, 5, 10, 20],
-        rerank=False
+        rerank=False,
     ):
         r"""A unified pipeline for training and evaluating a model.
 
