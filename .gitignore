@@ -1,4 +1,5 @@
 # Local folders
+log/
 temp/
 venv/
 checkpoints/

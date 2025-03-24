@@ -10,7 +10,7 @@ data:
   width: 128
   combineall: False
   transforms: ['random_flip']
-  save_dir: 'log/osnet_x1_0_market1501_softmax_cosinelr'
+  save_dir: 'temp/osnet_x1_0_market1501_softmax_cosinelr'
 
 loss:
   name: 'softmax'

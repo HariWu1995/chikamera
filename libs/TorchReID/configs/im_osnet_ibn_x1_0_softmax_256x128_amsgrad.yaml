@@ -10,7 +10,7 @@ data:
   width: 128
   combineall: False
   transforms: ['random_flip', 'color_jitter']
-  save_dir: 'log/osnet_ibn_x1_0_market2duke_softmax'
+  save_dir: 'temp/osnet_ibn_x1_0_market2duke_softmax'
 
 loss:
   name: 'softmax'

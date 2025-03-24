@@ -18,7 +18,7 @@ data:
   width: 128
   combineall: True
   transforms: ['random_flip', 'color_jitter']
-  save_dir: 'log/osnet_nas'
+  save_dir: 'temp/osnet_nas'
 
 loss:
   name: 'softmax'
