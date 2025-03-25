@@ -45,7 +45,12 @@ if __name__ == "__main__":
     default_config_file = os.path.join(current_dir, 'configs', f'{config_name}.yaml')
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-c','--config-file', type=str, default=default_config_file, help='path to config file')
+    parser.add_argument('--config-file', type=str, default=default_config_file, help='path to config file')
+    parser.add_argument('-r','--root', type=str, default=default_data_root, help='path to data root')
+    parser.add_argument('-s','--sources', type=str, default=[data_name], nargs='+', help='source datasets (delimited by space)')
+    parser.add_argument('-t','--targets', type=str, default=[data_name], nargs='+', help='target datasets (delimited by space)')
+    parser.add_argument('-tr','--transforms', type=str, nargs='+', help='data augmentation')
+    parser.add_argument('opts', default=None, nargs=argparse.REMAINDER, help='Modify config options using the command-line')
 
     args = parser.parse_args()
 
@@ -53,14 +58,33 @@ if __name__ == "__main__":
     cfg.use_gpu = torch.cuda.is_available()
     if args.config_file:
         cfg.merge_from_file(args.config_file)
+    reset_config(cfg, args)
+    cfg.merge_from_list(args.opts)
+    set_random_seed(cfg.train.seed)
+    check_cfg(cfg)
+
+    # HARDCODE
+    cfg.test.evaluate = True # test only
+    cfg.model.load_weights = default_ckpt_path
+
+    log_name = 'test.log' if cfg.test.evaluate else 'train.log'
+    log_name += time.strftime('-%Y-%m-%d-%H-%M-%S')
+    sys.stdout = Logger(osp.join(cfg.data.save_dir, log_name))
+
+    print('*'*19)
+    print('Show configuration\n{}\n'.format(cfg))
+    print('Collecting env info ...')
+    print('** System info **\n{}\n'.format(collect_env_info()))
+    print('*'*19)
 
     if cfg.use_gpu:
         torch.backends.cudnn.benchmark = True
 
-    # Modeling
+    datamanager = build_datamanager(cfg)
+
     print('\n\nBuilding model: {}'.format(cfg.model.name))
     model = torchreid.models.build_model(
-         num_classes = 100, # NOTE: any number because we do NOT use classfier
+         num_classes = datamanager.num_train_pids,
                 name = cfg.model.name,
                 loss = cfg.loss.name,
           pretrained = cfg.model.pretrained,
@@ -68,20 +92,24 @@ if __name__ == "__main__":
     )
     n_params, flops = compute_model_complexity(model, (1, 3, cfg.data.height, cfg.data.width))
     print('\nModel complexity: #params = {:,} #flops = {:,}'.format(n_params, flops))
-    
-    load_pretrained_weights(model, default_ckpt_path)
-    
-    model.eval()
+
+    load_pretrained_weights(model, cfg.model.load_weights)
     if cfg.use_gpu:
         model = nn.DataParallel(model).cuda()
-    
-    # Inference
-    print('\n\nInferencing ...')
-    test_case = torch.rand(1, 3, cfg.data.height, cfg.data.width)
-    if cfg.use_gpu:
-        test_case = test_case.cuda()
 
-    output = model(test_case)
-    print(output.shape)
+    optimizer = torchreid.optim.build_optimizer(model, **optimizer_kwargs(cfg))
+    scheduler = torchreid.optim.build_lr_scheduler(optimizer, **lr_scheduler_kwargs(cfg))
+
+    if cfg.model.resume and check_isfile(cfg.model.resume):
+        cfg.train.start_epoch = resume_from_checkpoint(
+            cfg.model.resume, model, optimizer=optimizer, scheduler=scheduler
+        )
+
+    print('\n\nBuilding {}-engine for {}-reid'.format(cfg.loss.name, cfg.data.type))
+    engine = build_engine(cfg, datamanager, model, optimizer, scheduler)
+    
+    # Evaluation
+    print('\n\nEvaluating ...')
+    engine.run(**engine_run_kwargs(cfg))
 
 
