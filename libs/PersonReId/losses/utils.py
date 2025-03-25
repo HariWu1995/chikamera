@@ -1,5 +1,6 @@
 import torch
 from torch import nn, Tensor
+from typing import Tuple
 
 
 def convert_label_to_similarity(normed_feature: Tensor, label: Tensor) -> Tuple[Tensor, Tensor]:

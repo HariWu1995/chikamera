@@ -28,8 +28,7 @@ k1, k2, l: parameters, the original paper is (k1=20, k2=6, l=0.3)
 Returns:
   final_dist: re-ranked distance, numpy array, shape [num_query, num_gallery]
 """
-
-
+from tqdm import tqdm
 import numpy as np
 
 
@@ -44,23 +43,24 @@ def re_ranking(q_g_dist, q_q_dist, g_g_dist, k1=20, k2=6, l=0.3):
     
     original_dist = np.concatenate([
                     np.concatenate([q_q_dist, q_g_dist], axis=1),
-                    np.concatenate([q_g_dist.T, g_g_dist], axis=1)
-    ], axis=0)
+                    np.concatenate([q_g_dist.T, g_g_dist], axis=1)], axis=0)
 
     # change the cosine similarity metric to euclidean similarity metric
+    print('Step 0 / 4 - Cosine similarity to Euclidean similarity')
     original_dist = 2. - 2 * original_dist
     original_dist = np.power(original_dist, 2).astype(np.float32)
     original_dist = np.transpose(1. * original_dist / np.max(original_dist, axis=0))
     V = np.zeros_like(original_dist).astype(np.float32)
-    # initial_rank = np.argsort(original_dist).astype(np.int32)
     
     # top K1 + 1
+    # initial_rank = np.argsort(original_dist).astype(np.int32)
     initial_rank = np.argpartition(original_dist, range(1, k1+1))
 
     query_num = q_g_dist.shape[0]
     all_num = original_dist.shape[0]
 
-    for i in range(all_num):
+    print('Step 1 / 4')
+    for i in tqdm(range(all_num)):
         # k-reciprocal neighbors
         k_reciprocal_index           = k_reciprocal_neigh(initial_rank, i, k1)
         k_reciprocal_expansion_index = k_reciprocal_index
@@ -76,22 +76,25 @@ def re_ranking(q_g_dist, q_q_dist, g_g_dist, k1=20, k2=6, l=0.3):
         weight = np.exp(-original_dist[i, k_reciprocal_expansion_index])
         V[i, k_reciprocal_expansion_index] = 1. * weight / np.sum(weight)
 
+    print('Step 2 / 4')
     original_dist = original_dist[:query_num,]
     if k2 != 1:
         V_qe = np.zeros_like(V, dtype=np.float32)
-        for i in range(all_num):
+        for i in tqdm(range(all_num)):
             V_qe[i,:] = np.mean(V[initial_rank[i, :k2], :], axis=0)
         V = V_qe
         del V_qe
     del initial_rank
     
+    print('Step 3 / 4')
     invIndex = []
-    for i in range(all_num):
+    for i in tqdm(range(all_num)):
         invIndex.append(np.where(V[:,i] != 0)[0])
 
     jaccard_dist = np.zeros_like(original_dist, dtype=np.float32)
 
-    for i in range(query_num):
+    print('Step 4 / 4')
+    for i in tqdm(range(query_num)):
         temp_min = np.zeros(shape=[1, all_num], dtype=np.float32)
         indNonZero = np.where(V[i,:] != 0)[0]
         indImages = []

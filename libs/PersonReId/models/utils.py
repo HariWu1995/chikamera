@@ -48,12 +48,12 @@ def fuse_all_conv_bn(model):
     return model
 
 
-def save_network(network, dirname, epoch_label, local_rank=-1):
-    if isinstance(epoch_label, int):
-        save_filename = 'net_%03d.pth' % epoch_label
+def save_network(network, model_dir, model_suffix, local_rank=-1):
+    if isinstance(model_suffix, int):
+        save_filename = 'net_%03d.pth' % model_suffix
     else:
-        save_filename = 'net_%s.pth' % epoch_label
-    save_path = os.path.join('./model', dirname, save_filename)
+        save_filename = 'net_%s.pth' % model_suffix
+    save_path = os.path.join(model_dir, save_filename)
 
     if local_rank > -1:
         if local_rank == 0: # save the main process model
@@ -62,6 +62,11 @@ def save_network(network, dirname, epoch_label, local_rank=-1):
     else:
         torch.save(network.state_dict(), save_path)
         network.cuda()
+
+
+def load_network(network, model_path):
+    network.load_state_dict(torch.load(model_path))
+    return network
 
 
 def load_state_dict_mute(self, state_dict: 'OrderedDict[str, Tensor]', strict: bool = True):

@@ -10,7 +10,7 @@ from .utils import weights_init_classifier, weights_init_kaiming
 class ClassBlock(nn.Module):
 
     def __init__(self, input_dim, class_num, droprate, 
-                relu=False, bnorm=True, linear=512, return_f = False):
+                linear=512, relu=False, bnorm=True, return_f=False):
 
         super(ClassBlock, self).__init__()
         self.return_f = return_f
@@ -23,7 +23,7 @@ class ClassBlock(nn.Module):
             add_block += [nn.BatchNorm1d(linear)]
         if relu:
             add_block += [nn.LeakyReLU(0.1)]
-        if droprate>0:
+        if droprate > 0:
             add_block += [nn.Dropout(p=droprate)]
         add_block = nn.Sequential(*add_block)
         add_block.apply(weights_init_kaiming)
