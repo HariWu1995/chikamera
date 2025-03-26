@@ -82,9 +82,13 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 ⬜ **Camera Projection**: Camera (Local) Pixel to Mesh (Global) Coordinate
 
-⬜ **Multi-Target Tracking**:
+✅ **Multi-Target Tracking**:
   
-  - ⬜ Person Re-Identification ([paper](https://arxiv.org/pdf/1905.00953) - [repo](https://github.com/KaiyangZhou/deep-person-reid) - [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html))
+  - ✅ Person Re-Identification ([paper](https://arxiv.org/pdf/1905.00953) - [repo](https://github.com/KaiyangZhou/deep-person-reid) - [model zoo](https://kaiyangzhou.github.io/deep-person-reid/MODEL_ZOO.html))
+
+  - ✅ Occluded-Person Re-Identification ([paper](https://arxiv.org/abs/2407.18112) - [repo](https://github.com/VlSomers/keypoint_promptable_reidentification) - [model zoo](https://drive.google.com/drive/folders/1t4wXc2c3qlFaqUCifAlc_OPrFwvb7peD))
+
+⬜ **Multi-Camera Target Association**
 
 ⬜ **Grouping Analysis** (individual / pair / group) using:
 
