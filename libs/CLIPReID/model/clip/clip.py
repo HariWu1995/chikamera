@@ -1,13 +1,13 @@
-import hashlib
 import os
+import hashlib
 import urllib
 import warnings
 from typing import Union, List
+from tqdm import tqdm
+from PIL import Image
 
 import torch
-from PIL import Image
 from torchvision.transforms import Compose, Resize, CenterCrop, ToTensor, Normalize
-from tqdm import tqdm
 
 from .model import build_model
 from .simple_tokenizer import SimpleTokenizer as _Tokenizer
@@ -37,6 +37,8 @@ _MODELS = {
 
 
 def _download(url: str, root: str = os.path.expanduser("~/.cache/clip")):
+
+    print(f'\n\nDownloading \n\t from {url} \n\t to {root} \n\t ...')
     os.makedirs(root, exist_ok=True)
     filename = os.path.basename(url)
 

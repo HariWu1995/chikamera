@@ -61,27 +61,29 @@ SOLVER:
   
 TEST:
   EVAL: True
-  IMS_PER_BATCH: 64
+  IMS_PER_BATCH: 16
   RE_RANKING: False
-  WEIGHT: ''
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
+  WEIGHT: './checkpoints/CLIP-ReID/OccDuke_clipreid_12x12sie_ViT-B-16_60.pth'
+
+#################################
+#   Modify from here to end     #
+#################################
+
+OUTPUT_DIR: "F:/__Datasets__/DukeMTMC-Occluded/results_clipreid"
 
 DATASETS:
-#   NAMES: ('market1501')
-#   ROOT_DIR: ('')
-# OUTPUT_DIR: ''
+  # NAMES: 'market1501'
+  # ROOT_DIR: "F:/__Datasets__"
+
+  NAMES: 'occ_duke'
+  ROOT_DIR: "F:/__Datasets__"
 
 #   NAMES: ('dukemtmc')
 #   ROOT_DIR: ('')
-# OUTPUT_DIR: ''
-
-#   NAMES: ('occ_duke')
-#   ROOT_DIR: ('')
-# OUTPUT_DIR: ''
 
 #   NAMES: ('msmt17')
 #   ROOT_DIR: ('')
-# OUTPUT_DIR: ''
 
 # CUDA_VISIBLE_DEVICES=3 python train_clipreid.py --config_file configs/person/vit_clipreid.yml

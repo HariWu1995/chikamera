@@ -1,36 +1,37 @@
+import os
+import argparse
+
+import random as rd
+import numpy as np
+import torch
+
 from utils.logger import setup_logger
 from datasets.make_dataloader import make_dataloader
 from model.make_model import make_model
-from solver.make_optimizer import make_optimizer
-from solver.lr_scheduler import WarmupMultiStepLR
 from loss.make_loss import make_loss
+from solver.lr_scheduler import WarmupMultiStepLR
+from solver.make_optimizer import make_optimizer
 from processor.processor import do_train
-import random
-import torch
-import numpy as np
-import os
-import argparse
+
 from config import cfg_base as cfg
 
+
 def set_seed(seed):
+    rd.seed(seed)
+    np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
+
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="ReID Baseline Training")
-    parser.add_argument(
-        "--config_file", default="configs/person/vit_base.yml", help="path to config file", type=str
-    )
-
-    parser.add_argument("opts", help="Modify config options using the command-line", default=None,
-                        nargs=argparse.REMAINDER)
+    parser.add_argument("--config_file", default="configs/person/vit_base.yml", type=str, help="path to config file")
     parser.add_argument("--local_rank", default=0, type=int)
+    parser.add_argument("opts", default=None, nargs=argparse.REMAINDER, help="Modify config options using the command-line")
     args = parser.parse_args()
 
     if args.config_file != "":
@@ -62,17 +63,21 @@ if __name__ == '__main__':
         torch.distributed.init_process_group(backend='nccl', init_method='env://')
 
     os.environ['CUDA_VISIBLE_DEVICES'] = cfg.MODEL.DEVICE_ID
-    train_loader, train_loader_normal, val_loader, num_query, num_classes, camera_num, view_num = make_dataloader(cfg)
+    train_loader, train_loader_normal, val_loader, \
+    num_query, num_classes, camera_num, view_num = make_dataloader(cfg)
 
-    model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num = view_num)
+    model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num=view_num)
 
     loss_func, center_criterion = make_loss(cfg, num_classes=num_classes)
 
     optimizer, optimizer_center = make_optimizer(cfg, model, center_criterion)
 
-    scheduler = WarmupMultiStepLR(optimizer, cfg.SOLVER.STEPS, cfg.SOLVER.GAMMA, cfg.SOLVER.WARMUP_FACTOR,
-                                  cfg.SOLVER.WARMUP_ITERS, cfg.SOLVER.WARMUP_METHOD)
-
+    scheduler = WarmupMultiStepLR(  optimizer = optimizer, 
+                                   milestones = cfg.SOLVER.STEPS, 
+                                        gamma = cfg.SOLVER.GAMMA, 
+                                 warmup_iters = cfg.SOLVER.WARMUP_ITERS, 
+                                warmup_factor = cfg.SOLVER.WARMUP_FACTOR,
+                                warmup_method = cfg.SOLVER.WARMUP_METHOD)
     do_train(
         cfg,
         model,
@@ -85,3 +90,4 @@ if __name__ == '__main__':
         loss_func,
         num_query, args.local_rank
     )
+

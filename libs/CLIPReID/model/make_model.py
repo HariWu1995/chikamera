@@ -1,49 +1,38 @@
+import numpy as np
+
 import torch
 import torch.nn as nn
-import numpy as np
-from .clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
-_tokenizer = _Tokenizer()
+
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 
-def weights_init_kaiming(m):
-    classname = m.__class__.__name__
-    if classname.find('Linear') != -1:
-        nn.init.kaiming_normal_(m.weight, a=0, mode='fan_out')
-        nn.init.constant_(m.bias, 0.0)
+from .utils import weights_init_classifier, weights_init_kaiming
+from .clip import clip
+from .clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 
-    elif classname.find('Conv') != -1:
-        nn.init.kaiming_normal_(m.weight, a=0, mode='fan_in')
-        if m.bias is not None:
-            nn.init.constant_(m.bias, 0.0)
-    elif classname.find('BatchNorm') != -1:
-        if m.affine:
-            nn.init.constant_(m.weight, 1.0)
-            nn.init.constant_(m.bias, 0.0)
 
-def weights_init_classifier(m):
-    classname = m.__class__.__name__
-    if classname.find('Linear') != -1:
-        nn.init.normal_(m.weight, std=0.001)
-        if m.bias:
-            nn.init.constant_(m.bias, 0.0)
+_tokenizer = _Tokenizer()
+
 
 class build_transformer(nn.Module):
+
     def __init__(self, num_classes, camera_num, view_num, cfg):
         super(build_transformer, self).__init__()
         self.model_name = cfg.MODEL.NAME
         self.cos_layer = cfg.MODEL.COS_LAYER
+        self.sie_coe = cfg.MODEL.SIE_COE
         self.neck = cfg.MODEL.NECK
         self.neck_feat = cfg.TEST.NECK_FEAT
+
         if self.model_name == 'ViT-B-16':
             self.in_planes = 768
             self.in_planes_proj = 512
         elif self.model_name == 'RN50':
             self.in_planes = 2048
             self.in_planes_proj = 1024
+
         self.num_classes = num_classes
         self.camera_num = camera_num
         self.view_num = view_num
-        self.sie_coe = cfg.MODEL.SIE_COE
         
         self.classifier = nn.Linear(self.in_planes, self.num_classes, bias=False)
         self.classifier.apply(weights_init_classifier)
@@ -60,25 +49,27 @@ class build_transformer(nn.Module):
         self.h_resolution = int((cfg.INPUT.SIZE_TRAIN[0]-16)//cfg.MODEL.STRIDE_SIZE[0] + 1)
         self.w_resolution = int((cfg.INPUT.SIZE_TRAIN[1]-16)//cfg.MODEL.STRIDE_SIZE[1] + 1)
         self.vision_stride_size = cfg.MODEL.STRIDE_SIZE[0]
+        
         clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size)
         clip_model.to("cuda")
-
         self.image_encoder = clip_model.visual
 
         if cfg.MODEL.SIE_CAMERA and cfg.MODEL.SIE_VIEW:
             self.cv_embed = nn.Parameter(torch.zeros(camera_num * view_num, self.in_planes))
             trunc_normal_(self.cv_embed, std=.02)
             print('camera number is : {}'.format(camera_num))
+
         elif cfg.MODEL.SIE_CAMERA:
             self.cv_embed = nn.Parameter(torch.zeros(camera_num, self.in_planes))
             trunc_normal_(self.cv_embed, std=.02)
             print('camera number is : {}'.format(camera_num))
+
         elif cfg.MODEL.SIE_VIEW:
             self.cv_embed = nn.Parameter(torch.zeros(view_num, self.in_planes))
             trunc_normal_(self.cv_embed, std=.02)
             print('camera number is : {}'.format(view_num))
 
-    def forward(self, x, label=None, cam_label= None, view_label=None):
+    def forward(self, x, label=None, cam_label=None, view_label=None):
         if self.model_name == 'RN50':
             image_features_last, image_features, image_features_proj = self.image_encoder(x) #B,512  B,128,512
             img_feature_last = nn.functional.avg_pool2d(image_features_last, image_features_last.shape[2:4]).view(x.shape[0], -1) 
@@ -86,7 +77,7 @@ class build_transformer(nn.Module):
             img_feature_proj = image_features_proj[0]
 
         elif self.model_name == 'ViT-B-16':
-            if cam_label != None and view_label!=None:
+            if cam_label != None and view_label != None:
                 cv_embed = self.sie_coe * self.cv_embed[cam_label * self.view_num + view_label]
             elif cam_label != None:
                 cv_embed = self.sie_coe * self.cv_embed[cam_label]
@@ -114,7 +105,6 @@ class build_transformer(nn.Module):
             else:
                 return torch.cat([img_feature, img_feature_proj], dim=1)
 
-
     def load_param(self, trained_path):
         param_dict = torch.load(trained_path)
         for i in param_dict:
@@ -133,7 +123,6 @@ def make_model(cfg, num_class, camera_num, view_num):
     return model
 
 
-from .clip import clip
 def load_clip_to_cpu(backbone_name, h_resolution, w_resolution, vision_stride_size):
     url = clip._MODELS[backbone_name]
     model_path = clip._download(url)
@@ -147,5 +136,5 @@ def load_clip_to_cpu(backbone_name, h_resolution, w_resolution, vision_stride_si
         state_dict = torch.load(model_path, map_location="cpu")
 
     model = clip.build_model(state_dict or model.state_dict(), h_resolution, w_resolution, vision_stride_size)
-
     return model
+

@@ -90,7 +90,6 @@ _C.DATASETS.NAMES = ('market1501')
 # Root directory where datasets should be used (and downloaded if not found)
 _C.DATASETS.ROOT_DIR = ('../data')
 
-
 # -----------------------------------------------------------------------------
 # DataLoader
 # -----------------------------------------------------------------------------
@@ -192,7 +191,6 @@ _C.SOLVER.STAGE2.WARMUP_EPOCHS = 5
 _C.SOLVER.STAGE2.WARMUP_LR_INIT = 0.01
 _C.SOLVER.STAGE2.LR_MIN = 0.000016
 
-
 _C.SOLVER.STAGE2.WARMUP_ITERS = 500
 # method of warm up, option: 'constant','linear'
 _C.SOLVER.STAGE2.WARMUP_METHOD = "linear"
@@ -230,8 +228,9 @@ _C.TEST.FEAT_NORM = 'yes'
 _C.TEST.DIST_MAT = "dist_mat.npy"
 # Whether calculate the eval score option: 'True', 'False'
 _C.TEST.EVAL = False
+
 # ---------------------------------------------------------------------------- #
 # Misc options
 # ---------------------------------------------------------------------------- #
 # Path to checkpoint and saved log of trained model
-_C.OUTPUT_DIR = ""
+_C.OUTPUT_DIR = "./temp"

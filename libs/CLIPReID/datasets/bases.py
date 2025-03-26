@@ -1,10 +1,11 @@
-from PIL import Image, ImageFile
-
-from torch.utils.data import Dataset
 import os.path as osp
 import random
-import torch
+
+from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+import torch
+from torch.utils.data import Dataset
 
 
 def read_image(img_path):
@@ -27,7 +28,6 @@ class BaseDataset(object):
     """
     Base class of reid dataset
     """
-
     def get_imagedata_info(self, data):
         pids, cams, tracks = [], [], []
         for _, pid, camid, trackid in data:
@@ -51,7 +51,6 @@ class BaseImageDataset(BaseDataset):
     """
     Base class of image reid dataset
     """
-
     def print_dataset_statistics(self, train, query, gallery):
         num_train_pids, num_train_imgs, num_train_cams, num_train_views = self.get_imagedata_info(train)
         num_query_pids, num_query_imgs, num_query_cams, num_train_views = self.get_imagedata_info(query)
@@ -68,6 +67,7 @@ class BaseImageDataset(BaseDataset):
 
 
 class ImageDataset(Dataset):
+    
     def __init__(self, dataset, transform=None):
         self.dataset = dataset
         self.transform = transform

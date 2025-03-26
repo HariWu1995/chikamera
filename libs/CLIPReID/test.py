@@ -1,21 +1,14 @@
 import os
-from config import cfg_base as cfg
 import argparse
-from datasets.make_dataloader import make_dataloader
+
+from config import cfg_base as cfg
+from utils.logger import setup_logger
 from model.make_model import make_model
 from processor.processor import do_inference
-from utils.logger import setup_logger
+from datasets.make_dataloader import make_dataloader
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="ReID Baseline Training")
-    parser.add_argument(
-        "--config_file", default="configs/person/vit_base.yml", help="path to config file", type=str
-    )
-    parser.add_argument("opts", help="Modify config options using the command-line", default=None,
-                        nargs=argparse.REMAINDER)
-
-    args = parser.parse_args()
+def run(args, num_trials: int = 10):
 
     if args.config_file != "":
         cfg.merge_from_file(args.config_file)
@@ -38,18 +31,18 @@ if __name__ == "__main__":
 
     os.environ['CUDA_VISIBLE_DEVICES'] = cfg.MODEL.DEVICE_ID
 
-    train_loader, train_loader_normal, val_loader, num_query, num_classes, camera_num, view_num = make_dataloader(cfg)
+    train_loader, train_loader_normal, val_loader, \
+    num_query, num_classes, camera_num, view_num = make_dataloader(cfg)
 
-    model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num = view_num)
+    model = make_model(cfg, num_class=num_classes, camera_num=camera_num, view_num=view_num)
     model.load_param(cfg.TEST.WEIGHT)
 
     if cfg.DATASETS.NAMES == 'VehicleID':
-        for trial in range(10):
-            train_loader, train_loader_normal, val_loader, num_query, num_classes, camera_num, view_num = make_dataloader(cfg)
-            rank_1, rank5, mAP = do_inference(cfg,
-                 model,
-                 val_loader,
-                 num_query)
+
+        for trial in range(num_trials):
+            train_loader, train_loader_normal, val_loader, \
+            num_query, num_classes, camera_num, view_num = make_dataloader(cfg)
+            rank_1, rank5, mAP = do_inference(cfg, model, val_loader, num_query)
             if trial == 0:
                 all_rank_1 = rank_1
                 all_rank_5 = rank5
@@ -58,13 +51,23 @@ if __name__ == "__main__":
                 all_rank_1 = all_rank_1 + rank_1
                 all_rank_5 = all_rank_5 + rank5
                 all_mAP = all_mAP + mAP
+            logger.info("rank_1: {}, rank_5: {}, trial: {}".format(rank_1, rank5, mAP, trial))
+            
+        avg_rank_1 = all_rank_1.sum() / num_trials
+        avg_rank_5 = all_rank_5.sum() / num_trials
+        avg_mAP    =    all_mAP.sum() / num_trials
+        logger.info(f"∑rank_1: {avg_rank_1:.1%}, ∑rank_5: {avg_rank_5:.1%}, ∑mAP {avg_mAP:.1%}")
 
-            logger.info("rank_1:{}, rank_5 {} : trial : {}".format(rank_1, rank5, mAP, trial))
-        logger.info("sum_rank_1:{:.1%}, sum_rank_5 {:.1%}, sum_mAP {:.1%}".format(all_rank_1.sum()/10.0, all_rank_5.sum()/10.0, all_mAP.sum()/10.0))
     else:
-       do_inference(cfg,
-                 model,
-                 val_loader,
-                 num_query)
+       do_inference(cfg, model, val_loader, num_query)
 
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="ReID Testing")
+    parser.add_argument("--config_file", default="configs/person/vit_base.yml", type=str, help="path to config file")
+    parser.add_argument("opts", default=None, nargs=argparse.REMAINDER, help="Modify config options using the command-line")
+
+    args = parser.parse_args()
+    run(args)
 

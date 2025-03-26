@@ -3,11 +3,9 @@
 @author:  sherlock
 @contact: sherlockliao01@gmail.com
 """
-
 import errno
 import json
 import os
-
 import os.path as osp
 
 
