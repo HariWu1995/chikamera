@@ -1,9 +1,13 @@
 from __future__ import division, print_function, absolute_import
-import time
-import numpy as np
+
 import os.path as osp
-import datetime
 from collections import OrderedDict
+from tqdm import tqdm
+
+import time
+import datetime
+import numpy as np
+
 import torch
 from torch.nn import functional as F
 from torch.utils.tensorboard import SummaryWriter
@@ -360,7 +364,7 @@ class Engine(object):
 
         def _feature_extraction(data_loader):
             f_, pids_, camids_ = [], [], []
-            for batch_idx, data in enumerate(data_loader):
+            for batch_idx, data in tqdm(enumerate(data_loader)):
                 imgs, pids, camids = self.parse_data_for_eval(data)
                 if self.use_gpu:
                     imgs = imgs.cuda()

@@ -91,14 +91,15 @@ def reset_config(cfg, args):
 
 
 def check_cfg(cfg):
-    if cfg.loss.name == 'triplet' and cfg.loss.triplet.weight_x == 0:
+    if cfg.loss.name == 'triplet' \
+    and cfg.loss.triplet.weight_x == 0:
         assert cfg.train.fixbase_epoch == 0, \
             'The output of classifier is not included in the computational graph'
 
 
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--config-file', type=str, default='', help='path to config file')
+    parser.add_argument('-c','--config-file', type=str, default='', help='path to config file')
     parser.add_argument('-s','--sources', type=str, nargs='+', help='source datasets (delimited by space)')
     parser.add_argument('-t','--targets', type=str, nargs='+', help='target datasets (delimited by space)')
     parser.add_argument('-tr','--transforms', type=str, nargs='+', help='data augmentation')
