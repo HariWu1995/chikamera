@@ -144,11 +144,14 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 - **[AI City Challenge](https://www.aicitychallenge.org/2024-data-and-evaluation/)**
 
-  - 🥇 **PoseTrack**: A Robust Online Multi-Camera People Tracking System With Geometric Consistency and State-aware Re-ID Correction ([paper](https://openaccess.thecvf.com/content/CVPR2024W/AICity/papers/Xie_A_Robust_Online_Multi-Camera_People_Tracking_System_With_Geometric_Consistency_CVPRW_2024_paper.pdf) | [code](https://github.com/ZhenyuX1E/PoseTrack))
+  - 🥇 **PoseTrack**: A Robust *`Online`* Multi-Camera People Tracking System With Geometric Consistency and State-aware Re-ID Correction ([paper](https://openaccess.thecvf.com/content/CVPR2024W/AICity/papers/Xie_A_Robust_Online_Multi-Camera_People_Tracking_System_With_Geometric_Consistency_CVPRW_2024_paper.pdf) | [code](https://github.com/ZhenyuX1E/PoseTrack))
+  <img src="libs/PoseTrack/assets/architecture.png">
 
-  - 🥈
+  - 🥈 **COSTrack**: Overlap Suppression Clustering for *`Offline`* Multi-Camera People Tracking ([paper](https://openaccess.thecvf.com/content/CVPR2024W/AICity/papers/Yoshida_Overlap_Suppression_Clustering__for_Offline_Multi-Camera_People_Tracking_CVPRW_2024_paper.pdf) | [code](https://github.com/riips/AIC24_Track1_YACHIYO_RIIPS))
+  <img src="libs/COSTrack/assets/overall-pipeline.png">
 
-  - 🥉
+  - 🥉 **SRCTrack**: Cluster Self-Refinement for Enhanced Online Multi-Camera People Tracking ([code](https://github.com/nota-github/AIC2024_Track1_Nota))
+  <img src="libs/SRCTrack/assets/overview.png">
 
 - **Wildtrack**: 
 
