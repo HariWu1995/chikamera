@@ -142,63 +142,71 @@ Refering to the field of *computer vision*, **chikamera** means *thousands* of *
 
 ## 🏆 Benchmark
 
-- **Wildtrack**:
+- **[AI City Challenge](https://www.aicitychallenge.org/2024-data-and-evaluation/)**
 
-    - **TrackTacular**: Lifting Multi-View Detection and Tracking to the Bird’s Eye View ([paper](https://arxiv.org/pdf/2403.12573v1) | [code](https://github.com/tteepe/TrackTacular) | [Model zoo](https://github.com/tteepe/TrackTacular/releases))
+  - 🥇 **PoseTrack**: A Robust Online Multi-Camera People Tracking System With Geometric Consistency and State-aware Re-ID Correction ([paper](https://openaccess.thecvf.com/content/CVPR2024W/AICity/papers/Xie_A_Robust_Online_Multi-Camera_People_Tracking_System_With_Geometric_Consistency_CVPRW_2024_paper.pdf) | [code](https://github.com/ZhenyuX1E/PoseTrack))
+
+  - 🥈
+
+  - 🥉
+
+- **Wildtrack**: 
+
+  - **TrackTacular**: Lifting Multi-View Detection and Tracking to the Bird’s Eye View ([paper](https://arxiv.org/pdf/2403.12573v1) | [code](https://github.com/tteepe/TrackTacular) | [Model zoo](https://github.com/tteepe/TrackTacular/releases))
     <img src="./assets/camera_binocular_to_3d_voxel.png">
 
-    - **EarlyBird**: Early-Fusion for Multi-View Tracking in the Bird's Eye View ([paper](https://arxiv.org/pdf/2310.13350v1) | [code](https://github.com/tteepe/EarlyBird))
+  - **EarlyBird**: Early-Fusion for Multi-View Tracking in the Bird's Eye View ([paper](https://arxiv.org/pdf/2310.13350v1) | [code](https://github.com/tteepe/EarlyBird))
 
-    - **ReST**: Reconfigurable Spatial-Temporal Graph Model for Multi-Camera Multi-Object Tracking ([paper](https://arxiv.org/pdf/2308.13229) | [code](https://github.com/chengche6230/ReST))
+  - **ReST**: Reconfigurable Spatial-Temporal Graph Model for Multi-Camera Multi-Object Tracking ([paper](https://arxiv.org/pdf/2308.13229) | [code](https://github.com/chengche6230/ReST))
 
 - **MOT**(-17 | -20):
 
-    - **UCMCTrack**: Multi-Object Tracking with Uniform Camera Motion Compensation ([paper]() | [code](https://github.com/corfyi/ucmctrack))
+  - **UCMCTrack**: Multi-Object Tracking with Uniform Camera Motion Compensation ([paper]() | [code](https://github.com/corfyi/ucmctrack))
 
-    - **CO-MOT** with *COLA* (COopetition Label Assignment) and *TALA* (Tracking Aware Label Assignment) ([paper](https://arxiv.org/pdf/2305.12724v1) | [code](https://github.com/BingfengYan/CO-MOT))
+  - **CO-MOT** with *COLA* (COopetition Label Assignment) and *TALA* (Tracking Aware Label Assignment) ([paper](https://arxiv.org/pdf/2305.12724v1) | [code](https://github.com/BingfengYan/CO-MOT))
 
-    - **MOTIP**: Multi-Object Tracking as ID Prediction ([paper](https://arxiv.org/pdf/2403.16848v1) | [code](https://github.com/MCG-NJU/MOTIP))
+  - **MOTIP**: Multi-Object Tracking as ID Prediction ([paper](https://arxiv.org/pdf/2403.16848v1) | [code](https://github.com/MCG-NJU/MOTIP))
 
-    - **TrackFormer**: Multi-Object Tracking with Transformers ([paper](https://arxiv.org/pdf/2101.02702) | [code](https://github.com/timmeinhardt/trackformer))
+  - **TrackFormer**: Multi-Object Tracking with Transformers ([paper](https://arxiv.org/pdf/2101.02702) | [code](https://github.com/timmeinhardt/trackformer))
 
 ## 🔎 Reference
 
 - 🚀 Case studies:
     
-    - [Multi-Camera Single-Object Tracking](https://github.com/arvganesh/Multi-Camera-Object-Tracking)
+  - [Multi-Camera Single-Object Tracking](https://github.com/arvganesh/Multi-Camera-Object-Tracking)
     <img src="./assets/tracking_multi_cam_single_obj.png">
 
-    - [Multi-Camera Live-Object Tracking](https://github.com/LeonLok/Multi-Camera-Live-Object-Tracking) (Traffic / Vehicle)
+  - [Multi-Camera Live-Object Tracking](https://github.com/LeonLok/Multi-Camera-Live-Object-Tracking) (Traffic / Vehicle)
 
-    - [Multi-Camera Multi-Target Tracking](https://github.com/nolanzzz/mtmct) (Game 3D)
+  - [Multi-Camera Multi-Target Tracking](https://github.com/nolanzzz/mtmct) (Game 3D)
     <img src="./assets/tracking_multi_cam_multi_obj.png">
 
-    - [Multi-Camera Rasp Pi Video Streaming](https://github.com/jeffbass/imagezmq/blob/master/docs/more-details.rst)
+  - [Multi-Camera Rasp Pi Video Streaming](https://github.com/jeffbass/imagezmq/blob/master/docs/more-details.rst)
 
 - 🧮 Frameworks / Libraries:
 
-    - [CamTools](https://github.com/yxlao/camtools)
+  - [CamTools](https://github.com/yxlao/camtools)
 
-    - [Open3D](https://github.com/isl-org/Open3D) - [Visualization](https://www.open3d.org/docs/release/tutorial/visualization/visualization.html)
-    <img src="assets/open3d_components.jpg">
+  - [Open3D](https://github.com/isl-org/Open3D) - [Visualization](https://www.open3d.org/docs/release/tutorial/visualization/visualization.html)
+  <img src="assets/open3d_components.jpg">
 
-    - [imageZMQ](https://github.com/jeffbass/imagezmq)
-    <img src="assets/imagezmq_example.jpg">
+  - [imageZMQ](https://github.com/jeffbass/imagezmq)
+  <img src="assets/imagezmq_example.jpg">
 
-    - [Ultralytics](https://github.com/ultralytics/ultralytics)
-    <img src="https://github.com/ultralytics/docs/releases/download/0/ultralytics-yolov8-tasks-banner.avif">
+  - [Ultralytics](https://github.com/ultralytics/ultralytics)
+  <img src="https://github.com/ultralytics/docs/releases/download/0/ultralytics-yolov8-tasks-banner.avif">
 
-    - [Supervision](https://github.com/roboflow/supervision) by Roboflow
-    <img src="assets/roboflow_supervision - demo.gif">
+  - [Supervision](https://github.com/roboflow/supervision) by Roboflow
+  <img src="assets/roboflow_supervision - demo.gif">
 
-    - [Inference](https://github.com/roboflow/inference) by Roboflow
-    <img src="assets/roboflow_inference - workflow.jpg">
+  - [Inference](https://github.com/roboflow/inference) by Roboflow
+  <img src="assets/roboflow_inference - workflow.jpg">
 
-    - [Super-Gradients](https://github.com/Deci-AI/super-gradients)
-    <img src="assets/supergradients - latency.png">
+  - [Super-Gradients](https://github.com/Deci-AI/super-gradients)
+  <img src="assets/supergradients - latency.png">
 
 - 🔬 Algorithms:
 
-    - **DeepSORT**: Simple Online and Realtime Tracking with a Deep Association Metric ([paper](https://arxiv.org/abs/1703.07402) | [code](https://github.com/nwojke/deep_sort) | [code-realtime](https://github.com/levan92/deep_sort_realtime))
+  - **DeepSORT**: Simple Online and Realtime Tracking with a Deep Association Metric ([paper](https://arxiv.org/abs/1703.07402) | [code](https://github.com/nwojke/deep_sort) | [code-realtime](https://github.com/levan92/deep_sort_realtime))
 
-    - **ADA-Track**: End-to-End Multi-Camera 3D Multi-Object Tracking ([paper](https://arxiv.org/pdf/2405.08909v1) | [code](https://github.com/dsx0511/ADA-Track))
+  - **ADA-Track**: End-to-End Multi-Camera 3D Multi-Object Tracking ([paper](https://arxiv.org/pdf/2405.08909v1) | [code](https://github.com/dsx0511/ADA-Track))
