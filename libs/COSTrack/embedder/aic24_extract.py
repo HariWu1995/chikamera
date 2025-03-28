@@ -14,7 +14,7 @@ from utils import FeatureExtractor
 import torchreid
 import json
 
-def make_parser():
+def build_parser():
     parser = argparse.ArgumentParser("reid")
     parser.add_argument("root_path", type=str, default=None)
     parser.add_argument("-s", "--scene", type=str, default=None)
@@ -22,7 +22,7 @@ def make_parser():
 
 if __name__ == "__main__":
 
-    args = make_parser().parse_args()
+    args = build_parser().parse_args()
     data_root = args.root_path
     scene = args.scene
 

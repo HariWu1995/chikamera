@@ -8,13 +8,13 @@ from sys import stdout
 import argparse
 import os.path as osp
 
-def make_parser():
+def build_parser():
     parser = argparse.ArgumentParser("reid")
     parser.add_argument("root_path", type=str, default=None)
     parser.add_argument("-s", "--scene", type=str, default=None)
     return parser
 
-args = make_parser().parse_args()
+args = build_parser().parse_args()
 data_root = osp.join(args.root_path, "Original")
 scene = args.scene
 

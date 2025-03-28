@@ -5,7 +5,7 @@ from tqdm import tqdm
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 
-def make_parser():
+def build_parser():
     parser = argparse.ArgumentParser(description="Extract Frames from AIC24 Track1 Videos")
     parser.add_argument("-p", "--path", type=str, default=None, help="path to AIC24_Track1_MCPT_Tracking folder")
     parser.add_argument("-n", "--num-processes", type=int, default=4, help="number of processes to use")
@@ -37,5 +37,5 @@ def main(path, num_processes):
             pass
 
 if __name__ == "__main__":
-    args = make_parser()
+    args = build_parser()
     main(args.path, args.num_processes)

@@ -6,3 +6,7 @@ supervision[assets]
 # super-gradients # error with checkpoint loading
 # sklearn # to run scripts/advamples/sports_football
 git+https://github.com/facebookresearch/segment-anything.git
+mmcv-full==1.7.1 -f https://download.openmmlab.com/mmcv/dist/12.4/2.5.1/index.html 
+# mmpose
+# easy-dwpose # light-weight version instead of mmpose
+# controlnet-aux # many versions of pose estimation

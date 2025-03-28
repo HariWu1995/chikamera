@@ -64,31 +64,32 @@ script/reid_train.sh
 
 
 ## Inferencing
-### 1. Prepare Pre-trained weights
+### 0. Prepare Pre-trained weights
 
 Download the pretrained weights from [ByteTrack Yolox](https://drive.google.com/file/d/1LVFqYqx88R0TUjCMbTaKrJkL7-SdCSmC/view?usp=drive_link), [LUPerson Resnet](https://drive.google.com/file/d/1xDKWJRWja01nNOeV7TWcn58sHYSal2k9/view?usp=drive_link) and [Hrnet](https://drive.google.com/file/d/1tNT6gOBB95qYPCypvCctj1o-r7bzdwxA/view?usp=drive_link). Put all these pretrained weights in the `ckpt_weight` folder.
 
-### 2. Detection
+### 1. Detection
 You can choose between the accelerated method detailed in step 2.1, which utilizes torch2trt, or the standard method described in step 2.2 if you prefer not to use it.
 
-#### 2.1 Accelerated Detection (torch2trt)
+#### 1.1 Accelerated Detection (torch2trt)
 ```
 python ./detection/utils/trt.py
 script/fast_detection.sh
 ```
-#### 2.2 Standard Detection (pytorch)
+#### 1.2 Standard Detection (pytorch)
 ```
 script/standard_detection.sh
 ```
 
 **Note:** Based on the actual hardware conditions, you can modify the values of `gpu_nums_per_iter`, `cpu_nums_per_iter`, and `scene_per_iter` in the shell script to achieve faster speeds or lower resource usage. In extreme cases, setting all three to 1 can accommodate the minimum hardware requirements. The same considerations regarding hardware configuration adjustments apply to the following scripts. 
 
-### 3. Pose Estimation
+### 2. Pose Estimation
 ```
 script/pose_estimation.sh
 ```
+This can run in parallel with `3. Re-ID`.
 
-### 4. Re-ID
+### 3. Re-ID
 
 Download the weight from [ReID model](https://drive.google.com/file/d/17qbBmBX7DiT2lOuQ6rGHl8s9deKHkVn2/view?usp=sharing). Put this finetuned weight in the `ckpt_weight` folder.
 
@@ -96,26 +97,22 @@ Download the weight from [ReID model](https://drive.google.com/file/d/17qbBmBX7D
 script/reid_infer.sh
 ```
 
-
-### 5. Tracking
+### 4. Tracking
 ```
 script/run_track.sh
 ```
 
-### 6. Generate final submission
+### 5. Generate final submission
 ```
 python3 track/generate_submission.py
 ```
 
 The final result is located in `result/track.txt`. You can compress it and upload it to the AIC24 evaluation system.
 
-
 ## Acknowledgement
 
 We appreciate the following github repos a lot for their valuable code base or datasets:
 
 https://github.com/ifzhang/ByteTrack
-
 https://github.com/JDAI-CV/fast-reid
-
 https://github.com/longcw/crossview_3d_pose_tracking

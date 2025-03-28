@@ -18,7 +18,7 @@ import numpy as np
 import argparse
 
 
-def make_parser():
+def build_parser():
     parser = argparse.ArgumentParser(description="Run Online MTPC System")
     parser.add_argument("-s", "--scene", type=str, default=None, help="scene name to inference")
     return parser.parse_args()
@@ -129,7 +129,7 @@ if __name__ == '__main__':
         'write_vid' : False,  # write result to video
         }
 
-    scene = make_parser().scene
+    scene = build_parser().scene
 
     if scene is not None:
         run(args=args, conf_thres=0.1, iou_thres=0.45, sources=sources[scene], result_paths=result_paths[scene], perspective=scene, cam_ids=cam_ids[scene], scene=scene)

@@ -12,7 +12,7 @@ from loguru import logger
 
 sys.path.append('.')
 
-from yolox.data.data_augment import preproc
+from yolox.data.data_augment import preprocess
 from yolox.exp import get_exp
 from yolox.utils import fuse_model, get_model_info, postprocess
 from yolox.utils.visualize import plot_tracking
@@ -21,7 +21,7 @@ from tracker.tracking_utils.timer import Timer
 
 
 IMAGE_EXT = [".jpg"]
-def make_parser():
+def build_parser():
     parser = argparse.ArgumentParser("BoT-SORT Demo!")
     parser.add_argument("root_path", type=str, default=None)
     parser.add_argument("-s","--scene", default=None, type=str)
@@ -101,8 +101,8 @@ class Predictor(object):
         self.model = model
         self.decoder = decoder
         self.num_classes = exp.num_classes
-        self.confthre = exp.test_conf
-        self.nmsthre = exp.nmsthre
+        self.confthre = exp.conf_thresh
+        self.nms_thresh = exp.nms_thresh
         self.test_size = exp.test_size
         self.device = device
         self.fp16 = fp16
@@ -131,7 +131,7 @@ class Predictor(object):
         img_info["width"] = width
         img_info["raw_img"] = img
 
-        img, ratio = preproc(img, self.test_size, self.rgb_means, self.std)
+        img, ratio = preprocess(img, self.test_size, self.rgb_means, self.std)
         img_info["ratio"] = ratio
         img = torch.from_numpy(img).unsqueeze(0).float().to(self.device)
         if self.fp16:
@@ -142,7 +142,7 @@ class Predictor(object):
             outputs = self.model(img)
             if self.decoder is not None:
                 outputs = self.decoder(outputs, dtype=outputs.type())
-            outputs = postprocess(outputs, self.num_classes, self.confthre, self.nmsthre)
+            outputs = postprocess(outputs, self.num_classes, self.confthre, self.nms_thresh)
         return outputs, img_info
 
 
@@ -302,9 +302,9 @@ def main(exp, args):
     logger.info("Args: {}".format(args))
 
     if args.conf is not None:
-        exp.test_conf = args.conf
+        exp.conf_thresh = args.conf
     if args.nms is not None:
-        exp.nmsthre = args.nms
+        exp.nms_thresh = args.nms
     if args.tsize is not None:
         exp.test_size = (args.tsize, args.tsize)
 
@@ -350,7 +350,7 @@ def main(exp, args):
 
 
 if __name__ == "__main__":
-    args = make_parser().parse_args()
+    args = build_parser().parse_args()
     exp = get_exp(args.exp_file, args.name)
 
     args.ablation = False
