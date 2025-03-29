@@ -21,7 +21,7 @@ from yolox.utils import fuse_model, get_model_info
 from yolox.utils.visualize import plot_tracking
 
 from predictor import Predictor
-from pipeline import run_pipeline
+from pipelines import run_pipeline
 from utils.io import *
 
 
@@ -150,8 +150,8 @@ if __name__ == "__main__":
     parser = build_parser(
         default_exp_path = "./libs/YOLOX/yolox/exps/example/mot/yolox_x_mix_det.py",
         default_ckpt_path = "./checkpoints/bytetrack_x_mot17.pth.tar",
-        default_data_root = "./temp/posetrack",
-        default_data_subset = "BodyUpperRotation",
+        default_data_root = "F:/__Datasets__/MultiviewX",
+        default_data_subset = "Image_subsets",
         default_scene_number = 0,
     )
         
@@ -163,7 +163,8 @@ if __name__ == "__main__":
 
     predictor = init_predictor(exp, args)
 
-    for scene_id in range(32):
+    num_scenes = 1 # MultiviewX: 1 - ICSens: 10 (0~9)
+    for scene_id in range(1):
         scene_id += 1
         print(f"\n\nDetecting in scene {scene_id} ...")
         args.scene_id = scene_id
