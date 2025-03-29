@@ -2,6 +2,14 @@ import cv2
 import numpy as np
 import torch
 
+import os
+import sys
+import inspect
+
+current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+sys.path.append(current_dir)
+sys.path.append("libs/YOLOX")
+
 from yolox.utils import postprocess
 
 

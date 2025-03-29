@@ -60,11 +60,12 @@ class Wholebody:
         # neck score when visualizing pred
         neck[:, 2:4] = np.logical_and(keypoints_info[:, 5, 2:4] > 0.3, 
                                       keypoints_info[:, 6, 2:4] > 0.3).astype(int)
-    
 
         _keypoints_info = np.insert(keypoints_info, 17, neck, axis=1)
+
         mmpose_idx = [17, 6, 8, 10, 7, 9, 12, 14, 16, 13, 15, 2, 1, 4, 3]
         openpose_idx = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17]
+        
         _keypoints_info[:, openpose_idx] = _keypoints_info[:, mmpose_idx]
         keypoints_info = _keypoints_info
 

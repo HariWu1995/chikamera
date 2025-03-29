@@ -1,6 +1,33 @@
+"""
+Dataset Structure: 
+
+    └── ICSens (stereo camera)
+        ├── images
+        │   ├── view1 (1920 x 1216)
+        │   ├── view2 (1521 x 691)
+        │   └── view3 (1920 x 1200)
+        │       ├── 0000 (scene_id)
+        │       ├── ...
+        │       └── 0009
+        │           ├── time_stamp.csv
+        │           ├── left
+        │           └── right
+        │               ├── 000000.png
+        │               └── ...
+        ├── calibration
+        │   ├── view1
+        │   ├── view2
+        │   └── view3
+        │       ├── absolute.txt
+        │       ├── extrinsics.txt
+        │       └── intrinsics.txt
+        └── ...
+"""
 import os
 import os.path as osp
+from glob import glob
 from tqdm import tqdm
+import itertools
 
 import cv2
 import numpy as np
@@ -17,53 +44,46 @@ def run_pipeline(predictor, args):
                     os.path.abspath(__file__)))
     else:
         root_path = args.root_path
-    out_path = osp.join(root_path, 'detection', f"scene_{args.scene_id:03d}")
-    in_path = osp.join(root_path, args.subset, f"scene_{args.scene_id:03d}")
+    out_path = osp.join(root_path, args.outset, f"{args.scene_id:04d}")
+    in_path = osp.join(root_path, args.subset)
     
     if os.path.exists(out_path) is False:
         os.makedirs(out_path)
 
-    cameras = sorted(os.listdir(in_path))
-    scale = min(800 / 1080, 1440 / 1920)
+    views = sorted(os.listdir(in_path))
     
     def preprocess_worker(img):
         return preprocess(img, predictor.img_size, predictor.rgb_mean, predictor.rgb_std)
     
     batch_size = args.batch_size
-    
-    for cam in cameras:
-        if int(cam.split('_')[1]) < 0:
-            continue
-        
-        frame_id = 0
-        results = []
-        video_path = os.path.join(in_path, cam, args.video_name)
 
-        cap = cv2.VideoCapture(video_path)
+    for view, cam in itertools.product(views, ['left','right']):
+
+        images_list = glob(os.path.join(in_path, view, f"{args.scene_id:04d}", cam, args.img_regext))
+
+        results = []
         id_bank = []
         memory_bank = []
         carry_flag = False
-        end_flag = False
     
-        pbar = tqdm()
+        pbar = tqdm(enumerate(images_list))
         timer = Timer()
-        
-        while cap.isOpened() and not end_flag:
 
-            ret, frame = cap.read()
-            if not ret:
-                end_flag = True
-                
-            if not end_flag:
-                memory_bank.append(frame)
-                id_bank.append(frame_id)
-            
+        for frame_id, frame_path in pbar:
+            frame = cv2.imread(frame_path)
+            height, width = frame.shape[:2]
+
+            scale = min(predictor.img_size[0] / height, 
+                        predictor.img_size[1] / width)
+
+            memory_bank.append(frame)
+            id_bank.append(frame_id)
+
             pbar.update()
-            frame_id += 1
             frame_rate = batch_size / max(1e-5, timer.average_time)
-            pbar.set_description('Processing cam {} - frame {} - {:.2f} fps'.format(cam, frame_id, frame_rate))
+            pbar.set_description('Processing camera {}-{} - frame {} - {:.2f} fps'.format(view, cam, frame_id, frame_rate))
 
-            if frame_id % batch_size == 0 or end_flag:
+            if frame_id % batch_size == 0:
                 if memory_bank:
                     img_data = memory_bank
                     id_data = np.array(id_bank)
@@ -91,20 +111,20 @@ def run_pipeline(predictor, args):
                     detections = []
                     if out_item is not None:
                         detections = out_item[:, :7].cpu().numpy()
-                        detections[:, :4] /= scale
+                        detections[:, :4] /= scale  # model input size -> video size 
                         detections = detections[detections[:, 4] > 0.1]
 
                     for det in detections:
                         x1, y1, x2, y2, score, _, _ = det
-                        # x1 = max(0, x1)
-                        # y1 = max(0, y1)
-                        # x2 = min(1920, x2)
-                        # y2 = min(1080, y2)
+                        x1 = max(0, x1)
+                        y1 = max(0, y1)
+                        x2 = min(width, x2)
+                        y2 = min(height, y2)
                         results.append([cam, id_data[out_id], 1, int(x1), int(y1), int(x2), int(y2), score])
                         
                 timer.toc()
 
-        output_file = os.path.join(out_path, f'{cam}.txt')
+        output_file = os.path.join(out_path, f'{view}_{cam}.txt')
         with open(output_file,'w') as f:
             for cam, frame_id, clss, x1, y1, x2, y2, score in results:
                 f.write(f'{frame_id},{clss},{x1},{y1},{x2},{y2},{score}\n')

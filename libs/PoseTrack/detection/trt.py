@@ -100,6 +100,7 @@ def main(exp, args, scene):
         ckpt_file = args.ckpt_file
         logger.info("loading checkpoint")
         ckpt_dict = torch.load(ckpt_file, map_location="cpu")
+
         # load the model state dict
         model.load_state_dict(ckpt_dict["model"])
         logger.info("loaded checkpoint done.")
@@ -113,13 +114,12 @@ def main(exp, args, scene):
 
     # create example data
     x = torch.ones((args.batch_size, 3, exp.test_size[0], exp.test_size[1]), device=args.device)
+
     # convert to TensorRT feeding sample data as input
     model.head.decode_in_inference = False
     model_trt = torch2trt(model, [x])
-    torch.save(model_trt.state_dict(), 'ckpt_weight/yolox_trt.pth')
+    torch.save(model_trt.state_dict(), './checkpoints/PoseTrack/yolox_trt.pth')
     
-    print('save_trt')
-
 
 if __name__ == "__main__":
     args = build_parser().parse_args()

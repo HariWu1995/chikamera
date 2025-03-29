@@ -9,9 +9,9 @@ Dataset Structure:
     │   │   ├── ...
     │   │   └── ground_truth.txt
     │   ├── scene_002
-    │   ├── ...
+    │   └── ...
     ├── val
-    │   ├── ...
+    │   └── ...
     └── test
         └── ...
 """
@@ -34,14 +34,13 @@ def run_pipeline(predictor, args):
                     os.path.abspath(__file__)))
     else:
         root_path = args.root_path
-    out_path = osp.join(root_path, 'detection', f"scene_{args.scene_id:03d}")
+    out_path = osp.join(root_path, args.outset, f"scene_{args.scene_id:03d}")
     in_path = osp.join(root_path, args.subset, f"scene_{args.scene_id:03d}")
     
     if os.path.exists(out_path) is False:
         os.makedirs(out_path)
 
     cameras = sorted(os.listdir(in_path))
-    scale = min(800 / 1080, 1440 / 1920)
     
     def preprocess_worker(img):
         return preprocess(img, predictor.img_size, predictor.rgb_mean, predictor.rgb_std)
@@ -52,11 +51,11 @@ def run_pipeline(predictor, args):
         if int(cam.split('_')[1]) < 0:
             continue
         
+        video_path = os.path.join(in_path, cam, args.video_name)
+        cap = cv2.VideoCapture(video_path)
+        
         frame_id = 0
         results = []
-        video_path = os.path.join(in_path, cam, args.video_name)
-
-        cap = cv2.VideoCapture(video_path)
         id_bank = []
         memory_bank = []
         carry_flag = False
@@ -70,6 +69,11 @@ def run_pipeline(predictor, args):
             ret, frame = cap.read()
             if not ret:
                 end_flag = True
+                break
+
+            height, width = frame.shape[:2]
+            scale = min(predictor.img_size[0] / height, 
+                        predictor.img_size[1] / width)
                 
             if not end_flag:
                 memory_bank.append(frame)
@@ -108,15 +112,15 @@ def run_pipeline(predictor, args):
                     detections = []
                     if out_item is not None:
                         detections = out_item[:, :7].cpu().numpy()
-                        detections[:, :4] /= scale
+                        detections[:, :4] /= scale  # model input size -> video size 
                         detections = detections[detections[:, 4] > 0.1]
 
                     for det in detections:
                         x1, y1, x2, y2, score, _, _ = det
-                        # x1 = max(0, x1)
-                        # y1 = max(0, y1)
-                        # x2 = min(1920, x2)
-                        # y2 = min(1080, y2)
+                        x1 = max(0, x1)
+                        y1 = max(0, y1)
+                        x2 = min(width, x2)
+                        y2 = min(height, y2)
                         results.append([cam, id_data[out_id], 1, int(x1), int(y1), int(x2), int(y2), score])
                         
                 timer.toc()

@@ -34,7 +34,7 @@ data_root = "F:/__Datasets__/PedestrianDynamics"
 data_set = "BodyUpperRotation"
 
 src_dir = f"{data_root}/{data_set}"
-tgt_dir = f"C:/Users/Mr. RIAH/Documents/Projects/chikamera/temp/posetrack/{data_set}"
+tgt_dir = f"F:/__Datasets__/AI-City-Fake/videos"
 
 if os.path.isdir(tgt_dir) is False:
     os.makedirs(tgt_dir)

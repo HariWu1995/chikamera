@@ -8,6 +8,14 @@ RGB_MEAN = [0.485, 0.456, 0.406]
 RGB_STD = [0.229, 0.224, 0.225]
 
 
+def clipping(bboxes_score, width: int = 1920, height: int = 1080):
+    bboxes_score[:, 0] = np.maximum(0, bboxes_score[:, 0])
+    bboxes_score[:, 1] = np.maximum(0, bboxes_score[:, 1])
+    bboxes_score[:, 2] = np.minimum( width, bboxes_score[:, 2])
+    bboxes_score[:, 3] = np.minimum(height, bboxes_score[:, 3])
+    return bboxes_score
+
+
 class ReIdFeatractor():
     """
     Re-Identification Feature Extractor
@@ -83,6 +91,6 @@ class ReIdFeatractor():
 
         crops = roi_align(frame, bboxes, output_size=(384, 128)).to(self.device)
         feats = (self.extract(crops) + \
-                 self.extract(crops.flip(3))).detach().cpu().numpy() / 2 # get average features with original and horizontal flip
-        return feats
+                 self.extract(crops.flip(3))) / 2 # get average features with original and horizontal flip
+        return feats.detach().cpu().numpy()
 
