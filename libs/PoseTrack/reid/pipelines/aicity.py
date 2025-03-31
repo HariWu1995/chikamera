@@ -70,9 +70,12 @@ def run_pipeline(reid_featractor, args):
             all_results.append(result)
             frame_id += 1
 
+        if len(all_results) == 0:
+            cap.release()
+            continue
+
         all_results = np.concatenate(all_results, axis=0)
         np.save(save_path, all_results)
-
         cap.release()
 
 

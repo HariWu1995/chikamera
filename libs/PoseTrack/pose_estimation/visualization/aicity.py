@@ -75,7 +75,6 @@ def run_viz(args):
             frame_kpt_scores = frame_keypts_df[kpt_score_columns].values.reshape(-1, 133, 1)
 
             frame_annot = visualize(frame, frame_kpt_coords, frame_kpt_scores)
-    
             writer.write(frame_annot)
 
             pbar.update()

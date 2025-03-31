@@ -1,7 +1,5 @@
-
-
-from states import TrackState, Track2DState
-from Tracker.kalman_filter import KalmanFilterBbox
+from Tracker.states import TrackState, Track2DState
+from Tracker.filter import KalmanFilterBbox as BboxFilter
 
 
 class PoseTrack2D:
@@ -25,19 +23,19 @@ class PoseTrack2D:
 
 class PoseTrack:
 
-    def __init__(self, cameras):
+    def __init__(self, cameras, **kwargs):
         self.cameras = cameras
         self.num_cam = len(cameras)
 
         self.time_left = 0
         self.valid_views = [] # valid view input at current time step
         
-        self.bank_size = 100
+        self.bank_size = kwargs.get('bank_size', 100)
         self.feat_bank = np.zeros((self.bank_size, 2048))
         self.feat_count = 0
 
-        self.track2ds = [PoseTrack2D() for i in range(self.num_cam)]
-        self.bbox_filters = [KalmanFilterBbox() for i in range(self.num_cam)]
+        self.track2ds     = [PoseTrack2D() for i in range(self.num_cam)]
+        self.bbox_filters = [ BboxFilter() for i in range(self.num_cam)]
 
         self.entities = []
         self.output_coord = np.zeros(3)
@@ -81,7 +79,7 @@ class PoseTrack:
             if self.feat_count >= self.bank_size:
                 bank = self.feat_bank
             else:
-                bank = self.feat_bank[:self.feat_count % self.bank_size]
+                bank =     self.feat_bank[:    self.feat_count % self.bank_size]
             new_bank = newtrack.feat_bank[:newtrack.feat_count % self.bank_size]
 
             sim = np.max((new_bank @ bank.T), axis=-1)

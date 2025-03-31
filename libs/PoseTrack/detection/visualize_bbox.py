@@ -1,11 +1,4 @@
-import os
-import os.path as osp
-
 import argparse
-from tqdm import tqdm
-
-import cv2
-import numpy as np
 
 from visualization import run_viz_aicity, run_viz_multiviewx, run_viz_icsens
 

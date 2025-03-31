@@ -69,6 +69,9 @@ def run_pipeline(pose_estimator, args):
             result = np.concatenate((frames, result), axis=1)
             all_results.append(result)
 
+        if len(all_results) == 0:
+            continue
+
         all_results = np.concatenate(all_results)
         np.savetxt(save_path, all_results, fmt=output_formats)
 

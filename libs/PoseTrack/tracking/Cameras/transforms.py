@@ -1,37 +1,7 @@
-import os
-import json
-
-import cv2
 import numpy as np
-import scipy
 
 
 eps = 1e-5
-
-
-class Camera():
-
-    z = 0.15 # FIXME: assumption
-
-    def __init__(self, config_path):
-        with open(config_path, 'r') as file:
-            config = json.load(file)
-
-        self.project_mat = np.array(config["camera projection matrix"])
-        self.project_inv = scipy.linalg.pinv(self.project_mat)
-
-        self.homo_mat = np.array(config["homography matrix"])
-        self.homo_inv = np.linalg.inv(self.homo_mat)
-
-        self.pos = np.linalg.inv(self.project_mat[:,:-1]) @ - self.project_mat[:,-1]
-
-        self.homo_feet = self.homo_mat.copy()
-        self.homo_feet[:, -1] = self.homo_feet[:, -1] + self.project_mat[:, 2] * self.z
-        self.homo_feet_inv = np.linalg.inv(self.homo_feet)
-
-        # index (str) in whole dataset
-        self.idx = config_path.split("/")[-2][-4:]
-        self.idx_int = int(self.idx)
 
 
 def cross(R, V):
@@ -88,3 +58,4 @@ epipolar_3d_score_norm = aic_cpp.epipolar_3d_score_norm
 # def epipolar_3d_score(rayA, rayB, alpha_epi):
 #     dist = Line2LineDist(rayA, rayB)
 #     return 1- dist / alpha_epi
+

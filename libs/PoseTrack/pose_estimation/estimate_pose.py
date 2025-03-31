@@ -1,12 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import os
 from argparse import ArgumentParser
-from tqdm import tqdm
-
-import cv2
-import numpy as np
 import torch
 
+import os
 import sys
 import inspect
 
@@ -24,8 +20,6 @@ from pipelines import (
 def build_parser(
         default_cfg_path: str = "configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hrnet-w32_8xb64-210e_coco-256x192.py",
         default_ckpt_path: str = "./checkpoints/td_hm_hrnet.pth",
-        default_data_root: str = "./temp/posetrack",
-        default_data_subset: str = "",
             default_device: str = 'cuda' if torch.cuda.is_available() else 'cpu',
     ):
 
@@ -77,11 +71,22 @@ if __name__ == '__main__':
     #####################################
     #       Test case: MultiviewX       #
     #####################################
-    args.root_path = "F:/__Datasets__/MultiviewX"
-    args.subset = "Image_subsets"
+    # args.root_path = "F:/__Datasets__/MultiviewX"
+    # args.subset = "Image_subsets"
 
-    print(f"\n\nEstimating pose-keypoints in single-scene MultiviewX ...")
-    run_pipeline_multiviewx(pose_estimator, args)
+    # print(f"\n\n[MultiviewX] Estimating pose-keypoints in single-scene ...")
+    # run_pipeline_multiviewx(pose_estimator, args)
+
+    #################################
+    #       Test case: ICSens       #
+    #################################
+    # args.root_path = "F:/__Datasets__/ICSens"
+    # args.subset = "images"
+
+    # for scene_id in range(10):
+    #     print(f"\n\n[ICSens] Estimating pose-keypoints in scene {scene_id} ...")
+    #     args.scene_id = scene_id
+    #     run_pipeline_icsens(pose_estimator, args)
 
     #################################
     #       Test case: AI City      #
@@ -89,20 +94,9 @@ if __name__ == '__main__':
     args.root_path = "F:/__Datasets__/AI-City-Fake"
     args.subset = "videos"
 
-    for scene_id in range(3, 7):
+    for scene_id in range(7):
         scene_id += 1
-        print(f"\n\nEstimating pose-keypoints in scene {scene_id} ...")
+        print(f"\n\n[AI City] Estimating pose-keypoints in scene {scene_id} ...")
         args.scene_id = scene_id
         run_pipeline_aicity(pose_estimator, args)
-
-    #################################
-    #       Test case: ICSens       #
-    #################################
-    args.root_path = "F:/__Datasets__/ICSens"
-    args.subset = "images"
-
-    for scene_id in range(2, 10):
-        print(f"\n\nEstimating pose-keypoints in scene {scene_id} ...")
-        args.scene_id = scene_id
-        run_pipeline_icsens(pose_estimator, args)
 

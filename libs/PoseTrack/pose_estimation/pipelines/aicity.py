@@ -66,7 +66,6 @@ def run_pipeline(pose_estimator, args):
             bboxes_score = dets[:, 2:7]
             bboxes_score = bboxes_score[bboxes_score[:, -1] > args.det_thresh]
             
-            frame_id += 1
             n_bboxes = len(bboxes_score)
             pbar.set_description(f'Camera {cam} - #frame {frame_id} - #bbox {n_bboxes}')
             pbar.update()
@@ -78,10 +77,14 @@ def run_pipeline(pose_estimator, args):
             frames = np.ones((len(result), 1)) * frame_id
             result = np.concatenate((frames, result), axis=1)
             all_results.append(result)
+            frame_id += 1
+
+        if len(all_results) == 0:
+            cap.release()
+            continue
 
         all_results = np.concatenate(all_results, axis=0)
         np.savetxt(save_path, all_results, fmt=output_formats)
-
         cap.release()
 
 

@@ -1,4 +1,6 @@
 from functools import partial
+from tqdm import tqdm
+from time import time
 
 import cv2
 import numpy as np
@@ -7,40 +9,47 @@ from scipy.optimize import linear_sum_assignment
 # NOTE: remember to build & install aic_cpp
 import aic_cpp
 
-# import sys
-# sys.path.append("../")
+import os
+import sys
+sys.path.append("./src")
 
-from Tracker.kalman_filter import KalmanFilterBbox
-from Tracker.matching import *
+from utils.timeout import timeout   # timeout decorator, return KeyboardInterrupt
+
+from Tracker.states import TrackState, Track2DState
+from Tracker.filter import KalmanFilterBbox as BboxFilter
+from Tracker.matching import IoUs
+from Tracker.PoseTrack import PoseTrack
 from Solver.bip_solver import GLPKSolver
-from PoseTrack import PoseTrack
-from states import TrackState, Track2DState
-from util.camera import *
-from util.process import find_view_for_cluster
+from Cameras.process import find_view_for_cluster
 
 
 eps = 1e-5
 
+time_solver_lim = int(os.environ.get("GLPK_TIME_LIMIT_MS", 30_000) / 1_000)
+time_other_lim = 60
+time_runs_out = time_solver_lim + time_other_lim
+
 
 class PoseTracker:
 
-    def __init__(self, cameras):
+    def __init__(self, cameras, **kwargs):
         self.cameras = cameras
         self.num_cam = len(cameras)
         self.num_keypoints = 17
 
-        self.solver = GLPKSolver(min_affinity=-1e5)
+        self.solver = GLPKSolver(min_affinity = -kwargs.get('affinity_range', 1_000), 
+                                 max_affinity =  kwargs.get('affinity_range', 1_000))
         self.tracks = []
-        self.bank_size = 30
-        self.decay_weight = 0.5
+        self.bank_size = kwargs.get('bank_size', 100)
+        self.decay_weight = kwargs.get('decay_weight', 0.5)
 
-        self.thresh_p2l_3d = 0.3
-        self.thresh_2d = 0.3
-        self.thresh_epi = 0.2
-        self.thresh_homo = 1.5
-        self.thresh_bbox = 0.4
-        self.thresh_kpts = 0.7
-        self.thresh_reid = 0.5
+        self.thresh_p2l_3d = kwargs.get('thresh_p2l_3d', 0.3)
+        self.thresh_2d = kwargs.get('thresh_2d', 0.3)
+        self.thresh_epi = kwargs.get('thresh_epi', 0.2)
+        self.thresh_homo = kwargs.get('thresh_homo', 1.5)
+        self.thresh_bbox = kwargs.get('thresh_bbox', 0.8)
+        self.thresh_kpts = kwargs.get('thresh_kpts', 0.7)
+        self.thresh_reid = kwargs.get('thresh_reid', 0.5)
 
         self.main_joints = np.array([5, 6, 11, 12, 13, 14, 15, 16])
         self.upper_body = np.array([5, 6, 11, 12])
@@ -58,7 +67,7 @@ class PoseTracker:
             reid_weight_sv = np.zeros((len(entity_list_mv[v]), n_track)) + eps
     
             for s_id, entity in enumerate(entity_list_mv[v]):
-                if entity.bbox[-1] < 0.88:
+                if entity.bbox[-1] < self.thresh_bbox:
                     continue
                 for t_id, track in enumerate(avail_tracks):
                     if not len(track.track2ds[v].state):
@@ -309,7 +318,7 @@ class PoseTracker:
             if track.feat_count >= self.bank_size:
                 bank = track.feat_bank
             else:
-                bank = track.feat_bank[:track.feat_count % self.bank_size]
+                bank =     track.feat_bank[:    track.feat_count % self.bank_size]
             new_bank = new_track.feat_bank[:new_track.feat_count % self.bank_size]            
             reid_sim[t_id] = np.max(new_bank @ bank.T)
         
@@ -340,8 +349,12 @@ class PoseTracker:
         aff_homo = np.ones((det_num, det_num)) * (-10_000)
         aff_epi = np.ones((det_num, det_num)) * (-10_000)
 
+        t1 = time()
         mv_rays = self.calculate_joint_rays(entity_list_mv)
+        t2 = time()
+        print(f'\n\nCalculated joint rays in {t2-t1:.2f} seconds')
 
+        pbar = tqdm()
         for vi in range(self.num_cam):
             entities_vi = entity_list_mv[vi]
             pos_i = self.cameras[vi].pos
@@ -375,9 +388,10 @@ class PoseTracker:
                             valid_kp = (entity_a.kpts[:, -1] > self.thresh_kpts) \
                                      & (entity_b.kpts[:, -1] > self.thresh_kpts)
                             j_id = np.where(valid_kp)[0]
-                            
-                            aff[j_id] = epipolar_3d_score_norm(pos_i, mv_rays[vi][a][j_id, :], 
-                                                               pos_j, mv_rays[vj][b][j_id, :], self.thresh_epi)
+
+                            aff[j_id] = aic_cpp.epipolar_3d_score_norm(pos_i, mv_rays[vi][a][j_id, :], 
+                                                                       pos_j, mv_rays[vj][b][j_id, :], self.thresh_epi)
+                            pbar.set_description(f"View {vi} -> View {vj} / Person {a} -> Person {b}")
 
                             if feet_valid_a and np.all(entity_b.kpts[self.feet_idx, -1] > self.thresh_kpts):
                                 feet_b = np.mean(entity_b.kpts[self.feet_idx, :-1], axis=0)
@@ -399,8 +413,12 @@ class PoseTracker:
         aff_ = 2 * aff_epi + aff_homo
         aff_[aff_ < -1000] = -np.inf
         
+        t1 = time()
         clusters, sol_matrix = self.solver.solve(aff_, True)
-        for cluster in clusters:
+        t2 = time()
+        print(f'\n\nFound {len(clusters)} clusters in {t2-t1:.2f} seconds')
+
+        for cluster in tqdm(clusters):
 
             if len(cluster) == 1:
                view_list, number_list = find_view_for_cluster(cluster, det_all_count)
@@ -420,7 +438,7 @@ class PoseTracker:
                 entity_list = [entity_list_mv[view_list[idx]][number_list[idx]] for idx in range(len(view_list))]
 
                 for i, entity in enumerate(entity_list):
-                    if entity.bbox[-1] > 0.9 \
+                    if entity.bbox[-1] > self.thresh_bbox \
                     and all(entity.kpts[self.main_joints, -1] > 0.5) \
                     and np.sum(iou_det_mv[view_list[i]][number_list[i]] > 0.15) < 1 \
                     and np.sum(ovr_det_mv[view_list[i]][number_list[i]] > 0.30) < 2:
@@ -439,7 +457,8 @@ class PoseTracker:
         ret[..., 2:] += ret[..., :2]
         return ret
 
-    def mv_update_wo_pred(self, entity_list_mv, frame_id=None):
+    @timeout(s=time_runs_out)
+    def update_mv(self, entity_list_mv, frame_id=None, pbar=None, desc=""):
 
         um_iou_det_mv = []
         um_ovr_det_mv = []
@@ -455,11 +474,21 @@ class PoseTracker:
             track.valid_views = []
 
         # 1st step, matching with confirmed and unconfirmed tracks
+        if pbar:
+            pbar.set_description(f"{desc} - [Step 1] Matching")
         avail_tracks = [track for track in self.tracks if track.state < TrackState.Missing]
         avail_idx = np.array([track.id for track in avail_tracks])
 
+        if pbar:
+            pbar.set_description(f"{desc} - [Step 2] Computing ReID aff")
         aff_reid, reid_weight = self.compute_reid_aff(entity_list_mv, avail_tracks)
+
+        if pbar:
+            pbar.set_description(f"{desc} - [Step 3] Computing Epi-homo aff")
         aff_epi, aff_homo = self.compute_epi_homo_aff(entity_list_mv, avail_tracks)
+
+        if pbar:
+            pbar.set_description(f"{desc} - [Step 4] Computing bbox-IoU aff")
         aff_box, iou_mv, \
         ovr_det_mv, ovr_tgt_mv = self.compute_bbox_iou_aff(entity_list_mv , avail_tracks)
 
@@ -468,6 +497,9 @@ class PoseTracker:
         match_result = list()
 
         for v in range(self.num_cam):
+
+            if pbar:
+                pbar.set_description(f"{desc} - [Step 5] Matching view {v}")
 
             iou_sv     =     iou_mv[v]
             ovr_det_sv = ovr_det_mv[v]
@@ -554,6 +586,9 @@ class PoseTracker:
             unmatched_ovr_tgt_sv = ovr_tgt_sv[unmatched_det_sv]
             um_ovr_tgt_mv.append(unmatched_ovr_tgt_sv)
     
+        if pbar:
+            pbar.set_description(f"{desc} - [Step 6] Update track")
+
         for t_id in updated_tracks:
             corr_v = avail_tracks[t_id].multi_view_3D_update(avail_tracks)
 
@@ -567,15 +602,24 @@ class PoseTracker:
                 track.get_output()
 
         # perform association for unmatched detections and matching with missing tracks
+        if pbar:
+            pbar.set_description(f"{desc} - [Step 7] Association for unmatched and missed tracks")
+
         miss_tracks = [track for track in self.tracks if track.state == TrackState.Missing]
         if len(unmatched_det):
+            if pbar:
+                pbar.set_description(f"{desc} - [Step 7] Association - init target")
             self.target_init(unmatched_det, miss_tracks, um_iou_det_mv, um_ovr_det_mv, um_ovr_tgt_mv)
 
         feat_cnts = []
-        for track in self.tracks:
-            for i in range(self.num_cam):
-                if track.age_bbox[i] >= 15:
-                    track.bbox_filter[i] = KalmanFilterBbox()
+        for t, track in enumerate(self.tracks):
+
+            if pbar:
+                pbar.set_description(f"{desc} - [Step 7] Association - track {t} / {len(self.tracks)}")
+
+            for v in range(self.num_cam):
+                if track.age_bbox[v] >= 15:
+                    track.bbox_filter[v] = BboxFilter()
 
             track.age_2D[track.age_2D >= 3] = np.inf
             track.age_3D[track.age_3D >= 3] = np.inf
@@ -597,7 +641,7 @@ class PoseTracker:
                 continue
             for v in track.valid_views:
                 bbox = track.bbox_mv[v]
-                record = np.array([[self.cameras[v].idx_int, 
+                record = np.array([[self.cameras[v].idx, 
                                     track.id, 
                                     frame_id, 
                                     bbox[0], 

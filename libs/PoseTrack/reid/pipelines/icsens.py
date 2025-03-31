@@ -62,7 +62,6 @@ def run_pipeline(reid_featractor, args):
             bboxes_score = dets[:, 2:7]
             bboxes_score = bboxes_score[bboxes_score[:, -1] > args.det_thresh]
             
-            frame_id += 1
             n_bboxes = len(bboxes_score)
             pbar.set_description(f'Camera {view}-{cam} - #frame {frame_id} - #bbox {n_bboxes}')
             pbar.update()
@@ -75,8 +74,11 @@ def run_pipeline(reid_featractor, args):
 
             frames = np.ones((len(feats), 1)) * frame_id
             result = np.concatenate((frames, bboxes_score, feats), axis=1)
-
             all_results.append(result)
+
+        if len(all_results) == 0:
+            continue
 
         all_results = np.concatenate(all_results, axis=0)
         np.save(save_path, all_results)
+

@@ -1,11 +1,19 @@
 import itertools
 from collections import defaultdict
 
+import os
 import numpy as np
 from cvxopt import glpk, matrix, spmatrix
 
-glpk.options = {"msg_lev": "GLP_MSG_ERR"}
 
+# https://cvxopt.org/userguide/coneprog.html#algorithm-parameters
+# https://kam.mff.cuni.cz/~elias/glpk.pdf
+
+glpk.options = {
+    "msg_lev": os.environ.get("GLPK_MESSAGE_LEVEL", "GLP_MSG_ALL"), # GLP_MSG_ERR
+     "tm_lim": os.environ.get("GLPK_TIME_LIMIT_MS", 30_000),    # miliseconds
+   "maxiters": os.environ.get("GLPK_MAX_ITERATION", 25),
+}
 
 FROZEN_POS_EDGE = -1
 FROZEN_NEG_EDGE = -2
@@ -63,21 +71,20 @@ class _BIPSolver:
             constraints_edges_idx = np.asarray([0, 0, 0], dtype=int).reshape(-1, 3)
 
         # add remaining constraints by permutation
-        constraints_edges_idx = np.vstack(
-            (
-                constraints_edges_idx,
-                np.roll(constraints_edges_idx, 1, axis=1),
-                np.roll(constraints_edges_idx, 2, axis=1),
-            )
-        )
+        constraints_edges_idx = np.vstack((
+                    constraints_edges_idx,
+            np.roll(constraints_edges_idx, 1, axis=1),
+            np.roll(constraints_edges_idx, 2, axis=1),
+        ))
 
         # clean redundant constraints
         # x1 + x2 <= 2
         constraints_edges_idx = constraints_edges_idx[constraints_edges_idx[:, 2] != FROZEN_POS_EDGE]
         # x1 - x2 <= 1
         constraints_edges_idx = constraints_edges_idx[
-                                                np.all(constraints_edges_idx[:, 0:2] != FROZEN_NEG_EDGE, axis=1)]
-        if len(constraints_edges_idx) == 0:  # no constraints
+                                                np.all(constraints_edges_idx[:, :2] != FROZEN_NEG_EDGE, axis=1)]
+        # no constraints
+        if len(constraints_edges_idx) == 0:
             constraints_edges_idx = np.asarray([0, 0, 0], dtype=int).reshape(-1, 3)
 
         # generate constraint coefficients
@@ -85,7 +92,7 @@ class _BIPSolver:
         constraints_coefficients[:, 2] = -1
 
         # generate constraint upper bounds
-        upper_bounds = np.ones(len(constraints_coefficients), dtype=np.float)
+        upper_bounds = np.ones(len(constraints_coefficients), dtype=float)
         upper_bounds -= np.sum(
             constraints_coefficients * (constraints_edges_idx == FROZEN_POS_EDGE),
             axis=1,

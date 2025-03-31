@@ -74,14 +74,12 @@ def run_viz(args):
 
         for frame_id, frame_path in pbar:
             frame = cv2.imread(frame_path)
-
             frame_keypts_df = keypts_df[(keypts_df['frame_id'] == frame_id)]
 
             frame_kpt_coords = frame_keypts_df[kpt_coord_columns].values.reshape(-1, 133, 2)
             frame_kpt_scores = frame_keypts_df[kpt_score_columns].values.reshape(-1, 133, 1)
 
             frame_annot = visualize(frame, frame_kpt_coords, frame_kpt_scores)
-    
             writer.write(frame_annot)
 
             pbar.update()

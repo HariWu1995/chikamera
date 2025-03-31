@@ -1,13 +1,9 @@
-import os
-import os.path as osp
-
 import argparse
 from loguru import logger
-from tqdm import tqdm
 
 import torch
-import numpy as np
 
+import os
 import sys
 import inspect
 
@@ -58,7 +54,7 @@ def init_predictor(exp, args):
 
     if args.trt:
         assert not args.fuse, "TensorRT model is not support model fusing!"
-        assert osp.exists(args.trt_file), \
+        assert os.path.exists(args.trt_file), \
             "TensorRT model is not found!\n Run python3 detection/trt.py first!"
         model.head.decode_in_inference = False
         decoder = model.head.decode_outputs

@@ -1,8 +1,6 @@
-import os
 from argparse import ArgumentParser
 
-import torch
-
+import os
 import sys
 import inspect
 
@@ -38,6 +36,7 @@ if __name__ == '__main__':
     parser = build_parser(default_ckpt_path="./checkpoints/PoseTrack/aic24.pkl")
     args = parser.parse_args()
     
+    import torch
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     reid_model = torch.load(args.ckpt_path, 
                             map_location='cpu').to(device=device).eval()
@@ -49,7 +48,7 @@ if __name__ == '__main__':
     args.root_path = "F:/__Datasets__/MultiviewX"
     args.subset = "Image_subsets"
 
-    print(f"\n\nExtracting ReID features in single-scene MultiviewX ...")
+    print(f"\n\n[MultiviewX] Extracting ReID features in single-scene ...")
     run_pipeline_multiviewx(featractor, args)
 
     #################################
@@ -60,7 +59,7 @@ if __name__ == '__main__':
 
     for scene_id in range(7):
         scene_id += 1
-        print(f"\n\nExtracting ReID features in scene {scene_id} ...")
+        print(f"\n\n[AI City] Extracting ReID features in scene {scene_id} ...")
         args.scene_id = scene_id
         run_pipeline_aicity(featractor, args)
 
@@ -71,7 +70,7 @@ if __name__ == '__main__':
     args.subset = "images"
 
     for scene_id in range(10):
-        print(f"\n\nExtracting ReID features in scene {scene_id} ...")
+        print(f"\n\n[ICSens] Extracting ReID features in scene {scene_id} ...")
         args.scene_id = scene_id
         run_pipeline_icsens(featractor, args)
 
