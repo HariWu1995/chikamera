@@ -1,0 +1,19 @@
+cam0:
+  camera_model: pinhole
+  intrinsics: [604.275, 603.477, 698.808, 573.422]
+  distortion_model: equidistant
+  distortion_coeffs: [-0.0102863, -0.00738359, 0.0025018, -0.000702625]
+  resolution: [1280, 1024]
+  rostopic: /rig/right/image_mono
+cam1:
+  T_cn_cnm1:
+  - [-0.99990907445,  0.00123141956, -0.01342856825, -0.01229610827]
+  - [-0.00141628780, -0.99990424140,  0.01376597816, -0.05325991132]
+  - [-0.01341033066,  0.01378374520,  0.99981506860,  0.00397622057]
+  - [ 0.00000000000,  0.00000000000,  0.00000000000,  1.00000000000]
+  camera_model: pinhole
+  intrinsics: [157.04, 157.047, 172.749, 144.512]
+  distortion_model: radtan
+  distortion_coeffs: [0.0371899, -0.0432632, 5.98878e-05, -0.000322505]
+  resolution: [352, 287]
+  rostopic: /rig/monstar/image_mono8
