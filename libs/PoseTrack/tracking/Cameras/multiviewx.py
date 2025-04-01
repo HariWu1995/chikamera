@@ -86,7 +86,7 @@ def load_camera_parameters(intr_file, extr_file):
     extrinsic_matrix = np.hstack((R, tvec))
 
     # Compute projection matrix P = K * [R | t].
-    proj_matrix = np.dot(intrinsic_matrix, extrinsic_matrix)
+    proj_matrix = intrinsic_matrix @ extrinsic_matrix
 
     # Consider only the first 2 columns of R and t (ignoring depth component)
     homo_matrix = np.dot(intrinsic_matrix, np.hstack((R[:, :2], tvec)))
@@ -117,6 +117,9 @@ class Camera:
 
         self.project_mat = all_params["projection_matrix"]
         self.project_inv = scipy.linalg.pinv(self.project_mat)
+
+        # _3d_to_2d_ = np.array([[1, 0, 0], [0, 1, 0], [0, 0, self.z], [0, 0, 1]])
+        # self.project2d_mat = self.project_mat @ _3d_to_2d_
 
         self.homo_mat = all_params["homography_matrix"]
         self.homo_inv = np.linalg.inv(self.homo_mat)
