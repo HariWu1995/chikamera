@@ -273,7 +273,7 @@ class Clustering:
 
 
 def group_dists(rerank_dists, lengths_exists, lengths_new, shape, normalize=True):
-    emb_dists = np.zeros(shape, dtype=np.float)
+    emb_dists = np.zeros(shape, dtype=np.float64)
     total_sum = np.sum(rerank_dists)
     num = 0
     ratio = 0

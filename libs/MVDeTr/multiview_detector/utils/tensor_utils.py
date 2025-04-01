@@ -1,8 +1,11 @@
 import torch
 
 
+eps = 1e-4
+
+
 def _sigmoid(x):
-    y = torch.clamp(x.sigmoid(), min=1e-4, max=1 - 1e-4)
+    y = torch.clamp(x.sigmoid(), min=eps, max=1-eps)
     return y
 
 

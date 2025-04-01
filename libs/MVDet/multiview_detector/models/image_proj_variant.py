@@ -1,19 +1,26 @@
 import os
 import numpy as np
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import kornia
 from torchvision.models.alexnet import alexnet
 from torchvision.models.vgg import vgg11
 from torchvision.models.mobilenet import mobilenet_v2
-from multiview_detector.models.resnet import resnet18, resnet50
+try:
+    from kornia import warp_perspective
+except ImportError:
+    from kornia.geometry.transform import warp_perspective
+
 from PIL import Image
 import matplotlib.pyplot as plt
 import cv2
 
+from multiview_detector.models.resnet import resnet18, resnet50
+
 
 class ImageProjVariant(nn.Module):
+
     def __init__(self, dataset, arch='resnet18'):
         super().__init__()
         self.num_cam = dataset.num_cam
@@ -66,7 +73,7 @@ class ImageProjVariant(nn.Module):
             imgs_result.append(img_res)
             img_res = F.interpolate(imgs[:, cam].to('cuda:0'), self.upsample_shape, mode='bilinear')
             proj_mat = self.proj_mats[cam].repeat([B, 1, 1]).float().to('cuda:0')
-            img_feature = kornia.warp_perspective(img_res, proj_mat, self.reducedgrid_shape)
+            img_feature = warp_perspective(img_res, proj_mat, self.reducedgrid_shape)
             if visualize:
                 projected_image_rgb = img_feature[0, :].detach().cpu().numpy().transpose([1, 2, 0])
                 projected_image_rgb = Image.fromarray((projected_image_rgb * 255).astype('uint8'))
@@ -119,7 +126,7 @@ class ImageProjVariant(nn.Module):
 
 
 def test():
-    from multiview_detector.datasets.frameDataset import frameDataset
+    from multiview_detector.datasets.MVDataset import MVDataset
     from multiview_detector.datasets.Wildtrack import Wildtrack
     from multiview_detector.datasets.MultiviewX import MultiviewX
     import torchvision.transforms as T
@@ -127,7 +134,7 @@ def test():
 
     transform = T.Compose([T.Resize([720, 1280]),  # H,W
                            T.ToTensor(), ])
-    dataset = frameDataset(Wildtrack(os.path.expanduser('~/Data/Wildtrack')), transform=transform, grid_reduce=1)
+    dataset = MVDataset(Wildtrack(os.path.expanduser('~/Data/Wildtrack')), transform=transform, grid_reduce=1)
     dataloader = DataLoader(dataset, 1, False, num_workers=0)
     imgs, map_gt, imgs_gt, frame = next(iter(dataloader))
     model = ImageProjVariant(dataset)

@@ -25,8 +25,10 @@ def get_imagecoord_from_worldcoord(world_coord, intrinsic_mat, extrinsic_mat, z=
 
 
 def get_imgcoord_from_worldcoord_mat(intrinsic_mat, extrinsic_mat, z=0):
-    """image of shape C,H,W (C,N_row,N_col); xy indexging; x,y (w,h) (n_col,n_row)
-    world of shape N_row, N_col; indexed as specified in the dataset attribute (xy or ij)
+    """
+    image of shape C,H,W (C,N_row,N_col); 
+    xy indexing; x,y (w,h) (n_col,n_row) world of shape N_row, N_col; 
+    indexed as specified in the dataset attribute (xy or ij)
     z in meters by default
     """
     threeD2twoD = np.array([[1, 0, 0], [0, 1, 0], [0, 0, z], [0, 0, 1]])
@@ -35,8 +37,10 @@ def get_imgcoord_from_worldcoord_mat(intrinsic_mat, extrinsic_mat, z=0):
 
 
 def get_worldcoord_from_imgcoord_mat(intrinsic_mat, extrinsic_mat, z=0):
-    """image of shape C,H,W (C,N_row,N_col); xy indexging; x,y (w,h) (n_col,n_row)
-    world of shape N_row, N_col; indexed as specified in the dataset attribute (xy or ij)
+    """
+    image of shape C,H,W (C,N_row,N_col); 
+    xy indexing; x,y (w,h) (n_col,n_row) world of shape N_row, N_col; 
+    indexed as specified in the dataset attribute (xy or ij)
     z in meters by default
     """
     project_mat = np.linalg.inv(get_imgcoord_from_worldcoord_mat(intrinsic_mat, extrinsic_mat, z))

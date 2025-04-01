@@ -31,12 +31,19 @@ This repo is dedicated to the code for **MVDeTr**.
 ## Dependencies
 This code uses the following libraries
 - python
-- pytorch & tochvision
+- pytorch & torchvision
 - numpy
 - matplotlib
 - pillow
 - opencv-python
 - kornia
+
+## MultiScaleDeformableAttention
+```bash
+git clone https://github.com/fundamentalvision/Deformable-DETR.git
+cd Deformable-DETR/models/ops
+pip install .
+```
 
 ## Data Preparation
 By default, all datasets are in `~/Data/`. We use [MultiviewX](https://github.com/hou-yz/MultiviewX) and [Wildtrack](https://www.epfl.ch/labs/cvlab/data/data-wildtrack/) in this project. 

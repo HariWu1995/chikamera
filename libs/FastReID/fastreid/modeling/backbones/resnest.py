@@ -7,7 +7,15 @@ import logging
 import math
 
 import torch
-from torch import nn
+from torch import nn# The style of importing Considers compatibility for the diversity of torchvision versions
+
+try:
+    from torchvision.models.utils import load_state_dict_from_url
+except ImportError:
+    try:
+        from torch.hub import load_state_dict_from_url
+    except ImportError:
+        from torch.utils.model_zoo import load_url as load_state_dict_from_url
 
 from fastreid.layers import SplAtConv2d, get_norm, DropBlock2D
 from fastreid.utils.checkpoint import get_unexpected_parameters_message, get_missing_parameters_message
@@ -350,7 +358,7 @@ def build_resnest_backbone(cfg):
                 logger.info("State dict keys error! Please check the state dict.")
                 raise e
         else:
-            state_dict = torch.hub.load_state_dict_from_url(
+            state_dict = load_state_dict_from_url(
                 model_urls['resnest' + depth[:-1]], progress=True, check_hash=True, map_location=torch.device('cpu'))
 
         incompatible = model.load_state_dict(state_dict, strict=False)
@@ -362,4 +370,5 @@ def build_resnest_backbone(cfg):
             logger.info(
                 get_unexpected_parameters_message(incompatible.unexpected_keys)
             )
+
     return model

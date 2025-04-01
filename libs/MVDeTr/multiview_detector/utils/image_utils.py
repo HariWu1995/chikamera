@@ -112,6 +112,7 @@ def draw_umich_gaussian(heatmap, center, sigma, k=1):
 
 
 class img_color_denormalize(object):
+
     def __init__(self, mean, std):
         self.mean = torch.FloatTensor(mean).view([1, -1, 1, 1])
         self.std = torch.FloatTensor(std).view([1, -1, 1, 1])

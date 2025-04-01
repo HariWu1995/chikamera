@@ -1,18 +1,23 @@
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import kornia
 from torchvision.models.alexnet import alexnet
 from torchvision.models.vgg import vgg11
 from torchvision.models.mobilenet import mobilenet_v2
-from multiview_detector.models.resnet import resnet18, resnet50
+try:
+    from kornia import warp_perspective
+except ImportError:
+    from kornia.geometry.transform import warp_perspective
 
-import matplotlib.pyplot as plt
+from multiview_detector.models.resnet import resnet18, resnet50
 
 
 class ResProjVariant(nn.Module):
+
     def __init__(self, dataset, arch='resnet18'):
         super().__init__()
         self.num_cam = dataset.num_cam
@@ -36,24 +41,24 @@ class ResProjVariant(nn.Module):
             base[-1] = nn.Sequential()
             base[-4] = nn.Sequential()
             split = 10
-            self.base_pt1 = base[:split].to('cuda:1')
-            self.base_pt2 = base[split:].to('cuda:0')
+            self.base_pt1 = base[:split].to('cuda')
+            self.base_pt2 = base[split:].to('cuda')
             out_channel = 512
         elif arch == 'resnet18':
             base = nn.Sequential(*list(resnet18(replace_stride_with_dilation=[False, True, True]).children())[:-2])
             split = 7
-            self.base_pt1 = base[:split].to('cuda:1')
-            self.base_pt2 = base[split:].to('cuda:0')
+            self.base_pt1 = base[:split].to('cuda')
+            self.base_pt2 = base[split:].to('cuda')
             out_channel = 512
         else:
             raise Exception('architecture currently support [vgg11, resnet18]')
         # 2.5cm -> 0.5m: 20x
         self.img_classifier = nn.Sequential(nn.Conv2d(out_channel, 64, 1), nn.ReLU(),
-                                            nn.Conv2d(64, 2, 1, bias=False)).to('cuda:0')
+                                            nn.Conv2d(64, 2, 1, bias=False)).to('cuda')
         self.map_classifier = nn.Sequential(nn.Conv2d(self.num_cam + 2, 512, 3, padding=1), nn.ReLU(),
                                             # nn.Conv2d(512, 512, 5, 1, 2), nn.ReLU(),
                                             nn.Conv2d(512, 512, 3, padding=2, dilation=2), nn.ReLU(),
-                                            nn.Conv2d(512, 1, 3, padding=4, dilation=4, bias=False)).to('cuda:0')
+                                            nn.Conv2d(512, 1, 3, padding=4, dilation=4, bias=False)).to('cuda')
         pass
 
     def forward(self, imgs, visualize=False):
@@ -62,24 +67,23 @@ class ResProjVariant(nn.Module):
         world_features = []
         imgs_result = []
         for cam in range(self.num_cam):
-            img_feature = self.base_pt1(imgs[:, cam].to('cuda:1'))
-            img_feature = self.base_pt2(img_feature.to('cuda:0'))
+            img_feature = self.base_pt1(imgs[:, cam].to('cuda'))
+            img_feature = self.base_pt2(img_feature.to('cuda'))
             img_feature = F.interpolate(img_feature, self.upsample_shape, mode='bilinear')
-            img_res = self.img_classifier(img_feature.to('cuda:0'))
+            img_res = self.img_classifier(img_feature.to('cuda'))
             imgs_result.append(img_res)
-            proj_mat = self.proj_mats[cam].repeat([B, 1, 1]).float().to('cuda:0')
+            proj_mat = self.proj_mats[cam].repeat([B, 1, 1]).float().to('cuda')
             # head, *foot*
-            world_feature = kornia.warp_perspective(img_res[:, 1].unsqueeze(1).to('cuda:0'), proj_mat,
-                                                    self.reducedgrid_shape)
+            world_feature = warp_perspective(img_res[:, 1].unsqueeze(1).to('cuda'), proj_mat, self.reducedgrid_shape)
             if visualize:
                 plt.imshow(img_res[0, 0].detach().cpu().numpy())
                 plt.show()
                 plt.imshow(world_feature[0, 0].detach().cpu().numpy())
                 plt.show()
-            world_features.append(world_feature.to('cuda:0'))
+            world_features.append(world_feature.to('cuda'))
 
-        world_features = torch.cat(world_features + [self.coord_map.repeat([B, 1, 1, 1]).to('cuda:0')], dim=1)
-        map_result = self.map_classifier(world_features.to('cuda:0'))
+        world_features = torch.cat(world_features + [self.coord_map.repeat([B, 1, 1, 1]).to('cuda')], dim=1)
+        map_result = self.map_classifier(world_features.to('cuda'))
         map_result = F.interpolate(map_result, self.reducedgrid_shape, mode='bilinear')
         return map_result, imgs_result
 
@@ -110,7 +114,7 @@ class ResProjVariant(nn.Module):
 
 
 def test():
-    from multiview_detector.datasets.frameDataset import frameDataset
+    from multiview_detector.datasets.MVDataset import MVDataset
     from multiview_detector.datasets.Wildtrack import Wildtrack
     from multiview_detector.datasets.MultiviewX import MultiviewX
     import torchvision.transforms as T
@@ -119,7 +123,7 @@ def test():
     transform = T.Compose([T.Resize([720, 1280]),  # H,W
                            T.ToTensor(),
                            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
-    dataset = frameDataset(Wildtrack(os.path.expanduser('~/Data/Wildtrack')), transform=transform)
+    dataset = MVDataset(Wildtrack(os.path.expanduser('~/Data/Wildtrack')), transform=transform)
     dataloader = DataLoader(dataset, 1, False, num_workers=0)
     imgs, map_gt, imgs_gt, frame = next(iter(dataloader))
     model = ResProjVariant(dataset)

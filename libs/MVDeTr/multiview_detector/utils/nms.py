@@ -41,4 +41,5 @@ def nms(points, scores, dist_thres=50 / 2.5, top_k=50):
         dists = torch.norm(target_point - remaining_points, dim=1)  # store result in distances
         # keep only elements with an dists > dist_thres
         indices = indices[dists > dist_thres]
+
     return keep, count

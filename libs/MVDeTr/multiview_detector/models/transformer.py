@@ -35,6 +35,7 @@ class TransformerEncoder(nn.Module):
 
 
 class TransformerEncoderLayer(nn.Module):
+
     def __init__(self, d_model, nhead, dim_feedforward=2048, dropout=0.1):
         super().__init__()
         self.self_attn = nn.MultiheadAttention(d_model, nhead, dropout=dropout)

@@ -76,7 +76,7 @@ def load_camera_parameters(intr_file, extr_file):
     fs_extr.release()
 
     fs_intr = cv2.FileStorage(intr_file, cv2.FILE_STORAGE_READ)
-    camera_matrix = fs_intr.getNode("camera_matrix").mat()
+    intrinsic_matrix = fs_intr.getNode("camera_matrix").mat()
     fs_intr.release()
     
     # Convert rvec to rotation matrix
@@ -86,12 +86,15 @@ def load_camera_parameters(intr_file, extr_file):
     extrinsic_matrix = np.hstack((R, tvec))
 
     # Compute projection matrix P = K * [R | t].
-    proj_matrix = np.dot(camera_matrix, extrinsic_matrix)
+    proj_matrix = np.dot(intrinsic_matrix, extrinsic_matrix)
 
     # Consider only the first 2 columns of R and t (ignoring depth component)
-    homo_matrix = np.dot(camera_matrix, np.hstack((R[:, :2], tvec)))
+    homo_matrix = np.dot(intrinsic_matrix, np.hstack((R[:, :2], tvec)))
 
     all_params = dict()
+    all_params["height"] = tvec[1, 0]  # NOTE: Y-axis: 1 / Z-axis: 2
+    all_params["intrinsic_matrix"] = intrinsic_matrix
+    all_params["extrinsic_matrix"] = extrinsic_matrix
     all_params["projection_matrix"] = proj_matrix
     all_params["homography_matrix"] = homo_matrix
     return all_params
@@ -108,6 +111,9 @@ class Camera:
         self.idx = int(self.name)
 
         all_params = load_camera_parameters(in_config_path, ex_config_path)
+        self.height = all_params["height"]
+        self.intr_mat = all_params["intrinsic_matrix"]
+        self.extr_mat = all_params["extrinsic_matrix"]
 
         self.project_mat = all_params["projection_matrix"]
         self.project_inv = scipy.linalg.pinv(self.project_mat)
@@ -125,6 +131,24 @@ class Camera:
 if __name__ == "__main__":
 
     root_path = "F:/__Datasets__/MultiviewX/calibrations"
-    camera = Camera(in_config_path=f"{root_path}/intrinsic/intr_Camera1.xml",
-                    ex_config_path=f"{root_path}/extrinsic/extr_Camera1.xml")
-    print(camera.__dict__)
+    # camera = Camera(in_config_path=f"{root_path}/intrinsic/intr_Camera1.xml",
+    #                 ex_config_path=f"{root_path}/extrinsic/extr_Camera1.xml")
+    # print(camera.__dict__)
+    
+    Ks, Ts, hs = [], [], []
+    for cam_id in range(1, 7):
+        cam = Camera(in_config_path=f"{root_path}/intrinsic/intr_Camera{cam_id}.xml",
+                     ex_config_path=f"{root_path}/extrinsic/extr_Camera{cam_id}.xml")
+        hs.append(cam.height)
+        Ks.append(cam.intr_mat)
+        Ts.append(np.concatenate([cam.extr_mat, np.array([[0, 0, 0, 1]])], axis=0))
+    print(hs)
+
+    import sys
+    sys.path.append("src/camera")
+
+    from visualization import create_camera_frustums, visualize_camera_mesh
+    camera_mesh = create_camera_frustums(Ks, Ts, camera_distance=np.max(hs), 
+                                                 randomize_color=True)
+    visualize_camera_mesh(camera_mesh, interactive=True)
+

@@ -1,6 +1,15 @@
 import torch
 import torch.nn as nn
-from torchvision.models.utils import load_state_dict_from_url
+
+# The style of importing Considers compatibility for the diversity of torchvision versions
+try:
+    from torchvision.models.utils import load_state_dict_from_url
+except ImportError:
+    try:
+        from torch.hub import load_state_dict_from_url
+    except ImportError:
+        from torch.utils.model_zoo import load_url as load_state_dict_from_url
+
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
            'resnet152', 'resnext50_32x4d', 'resnext101_32x8d',
@@ -211,8 +220,7 @@ class ResNet(nn.Module):
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        state_dict = load_state_dict_from_url(model_urls[arch],
-                                              progress=progress)
+        state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
         model.load_state_dict(state_dict)
     return model
 

@@ -19,9 +19,11 @@ Wildtrack             |  MultiviewX
 ![alt text](https://hou-yz.github.io/images/eccv2020_mvdet_wildtrack_demo.gif "Detection results on Wildtrack dataset")  |  ![alt text](https://hou-yz.github.io/images/eccv2020_mvdet_multiviewx_demo.gif "Detection results on MultiviewX dataset")
 
 ## Content
+
 - [MultiviewX dataset](#multiviewx-dataset)
     * [Download MultiviewX](#download-multiviewx)
     * [Build your own version](#build-your-own-version)
+
 - [MVDet Code](#mvdet-code)
     * [Dependencies](#dependencies)
     * [Data Preparation](#data-preparation)
@@ -32,7 +34,7 @@ Using pedestrian models from [PersonX](https://github.com/sxzrt/Dissecting-Perso
 
 ![alt text](https://hou-yz.github.io/images/eccv2020_mvdet_multiviewx_dataset.jpg "Visualization of MultiviewX dataset")
 
-MultiviewX dataset covers a square of 16 meters by 25 meters. We quantize the ground plane into a 640x1000 grid. There are 6 cameras with overlapping field-of-view in MultiviewX dataset, each of which outputs a 1080x1920 resolution image. We also generate annotations for 400 frames in MultiviewX at 2 fps (same as Wildtrack). On average, 4.41 cameras are covering the same location. 
+MultiviewX dataset covers a square of 16 meters by 25 meters. We quantize the ground plane into a 640 x 1000 grid. There are 6 cameras with overlapping field-of-view in MultiviewX dataset, each of which outputs a 1080 x 1920 resolution image. We also generate annotations for 400 frames in MultiviewX at 2 fps (same as Wildtrack). On average, 4.41 cameras are covering the same location. 
 
 ### Download MultiviewX
 Please refer to this [link](https://1drv.ms/u/s!AtzsQybTubHfhYZ9Ghhahbp20OX9kA?e=Hm9Xdg) for download.

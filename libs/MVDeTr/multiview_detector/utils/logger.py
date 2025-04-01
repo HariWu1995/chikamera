@@ -3,6 +3,7 @@ import sys
 
 
 class Logger(object):
+
     def __init__(self, fpath=None):
         self.console = sys.stdout
         self.file = None

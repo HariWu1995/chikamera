@@ -1,9 +1,11 @@
 import os
-import numpy as np
-import cv2
-import xml.etree.ElementTree as ET
 import re
+import xml.etree.ElementTree as ET
+
+import cv2
+import numpy as np
 from torchvision.datasets import VisionDataset
+
 
 intrinsic_camera_matrix_filenames = ['intr_CVLab1.xml', 'intr_CVLab2.xml', 'intr_CVLab3.xml', 'intr_CVLab4.xml',
                                      'intr_IDIAP1.xml', 'intr_IDIAP2.xml', 'intr_IDIAP3.xml']
@@ -12,19 +14,21 @@ extrinsic_camera_matrix_filenames = ['extr_CVLab1.xml', 'extr_CVLab2.xml', 'extr
 
 
 class Wildtrack(VisionDataset):
-    def __init__(self, root):
+
+    def __init__(self, root, name: str = 'Wildtrack'):
         super().__init__(root)
         # WILDTRACK has ij-indexing: H*W=480*1440, so x should be \in [0,480), y \in [0,1440)
         # WILDTRACK has in-consistent unit: centi-meter (cm) for calibration & pos annotation,
-        self.__name__ = 'Wildtrack'
+        self.__name__ = name
         self.img_shape, self.worldgrid_shape = [1080, 1920], [480, 1440]  # H,W; N_row,N_col
         self.num_cam, self.num_frame = 7, 2000
         # x,y actually means i,j in Wildtrack, which correspond to h,w
         self.indexing = 'ij'
         # i,j for world map indexing
         self.worldgrid2worldcoord_mat = np.array([[2.5, 0, -300], [0, 2.5, -900], [0, 0, 1]])
-        self.intrinsic_matrices, self.extrinsic_matrices = zip(
-            *[self.get_intrinsic_extrinsic_matrix(cam) for cam in range(self.num_cam)])
+        self.intrinsic_matrices, \
+        self.extrinsic_matrices = zip(*[self.get_intrinsic_extrinsic_matrix(cam) 
+                                        for cam in range(self.num_cam)])
 
     def get_image_fpaths(self, frame_range):
         img_fpaths = {cam: {} for cam in range(self.num_cam)}
@@ -39,7 +43,7 @@ class Wildtrack(VisionDataset):
         return img_fpaths
 
     def get_worldgrid_from_pos(self, pos):
-        grid_x = pos % 480
+        grid_x = pos  % 480
         grid_y = pos // 480
         return np.array([grid_x, grid_y], dtype=int)
 
@@ -77,8 +81,10 @@ class Wildtrack(VisionDataset):
         intrinsic_matrix = intrinsic_params_file.getNode('camera_matrix').mat()
         intrinsic_params_file.release()
 
-        extrinsic_params_file_root = ET.parse(os.path.join(self.root, 'calibrations', 'extrinsic',
-                                                           extrinsic_camera_matrix_filenames[camera_i])).getroot()
+        extrinsic_params_file_root = ET.parse(
+            os.path.join(self.root, 'calibrations', 'extrinsic',
+                        extrinsic_camera_matrix_filenames[camera_i])
+        ).getroot()
 
         rvec = extrinsic_params_file_root.findall('rvec')[0].text.lstrip().rstrip().split(' ')
         rvec = np.array(list(map(lambda x: float(x), rvec)), dtype=np.float32)
@@ -87,7 +93,7 @@ class Wildtrack(VisionDataset):
         tvec = np.array(list(map(lambda x: float(x), tvec)), dtype=np.float32)
 
         rotation_matrix, _ = cv2.Rodrigues(rvec)
-        translation_matrix = np.array(tvec, dtype=np.float).reshape(3, 1)
+        translation_matrix = np.array(tvec, dtype=np.float64).reshape(3, 1)
         extrinsic_matrix = np.hstack((rotation_matrix, translation_matrix))
 
         return intrinsic_matrix, extrinsic_matrix
@@ -106,35 +112,79 @@ class Wildtrack(VisionDataset):
                         bbox_by_pos_cam[pos][cam] = None
                     else:
                         cam, pos, left, top, right, bottom = map(int, cam_pos_bbox_pattern.search(line).groups())
-                        bbox_by_pos_cam[pos][cam] = [max(left, 0), max(top, 0),
-                                                     min(right, 1920 - 1), min(bottom, 1080 - 1)]
+                        bbox_by_pos_cam[pos][cam] = [max(left, 0), 
+                                                     max(top, 0),
+                                                     min(right, 1920 - 1), 
+                                                     min(bottom, 1080 - 1)]
         return bbox_by_pos_cam
 
 
-def test():
-    from multiview_detector.utils.projection import get_imagecoord_from_worldcoord
-    dataset = Wildtrack(os.path.expanduser('~/Data/Wildtrack'), )
-    pom = dataset.read_pom()
+if __name__ == '__main__':
 
+    import sys
+    import inspect
+
+    curr_dir = os.path.dirname(
+                os.path.abspath(inspect.getfile(inspect.currentframe())))
+    repo_dir = os.path.dirname(
+                os.path.dirname(curr_dir))
+    sys.path.append(repo_dir)
+    sys.path.append("src/camera")
+
+    from multiview_detector.utils.projection import get_imagecoord_from_worldcoord
+    from visualization import create_camera_frustums, visualize_camera_mesh
+
+    dataset = Wildtrack('F:/__Datasets__/Wildtrack')
+    Ks = dataset.intrinsic_matrices
+    Ts = dataset.extrinsic_matrices
+    Ts = [np.concatenate([T, np.array([[0, 0, 0, 1]])], axis=0) for T in Ts]
+    Hs = [abs(T[1, 3]) for T in Ts]
+    print(Hs)
+
+    camera_mesh = create_camera_frustums(Ks, Ts, camera_distance=np.max(Hs), 
+                                        center_line=False, randomize_color=True)
+    visualize_camera_mesh(camera_mesh, interactive=True)
+
+    quit()
+
+    pom = dataset.read_pom()
     foot_3ds = dataset.get_worldcoord_from_pos(np.arange(np.product(dataset.worldgrid_shape)))
+
+    import itertools
+    from tqdm import tqdm
+
+    pbar = tqdm(
+        list(
+            itertools.product(
+                list(range(dataset.num_cam)),
+                list(range(np.product(dataset.worldgrid_shape)))
+            )
+        )
+    )
     errors = []
-    for cam in range(dataset.num_cam):
-        projected_foot_2d = get_imagecoord_from_worldcoord(foot_3ds, dataset.intrinsic_matrices[cam],
-                                                           dataset.extrinsic_matrices[cam])
-        for pos in range(np.product(dataset.worldgrid_shape)):
-            bbox = pom[pos][cam]
-            foot_3d = dataset.get_worldcoord_from_pos(pos)
-            if bbox is None:
-                continue
-            foot_2d = [(bbox[0] + bbox[2]) / 2, bbox[3]]
-            p_foot_2d = projected_foot_2d[:, pos]
-            p_foot_2d = np.maximum(p_foot_2d, 0)
-            p_foot_2d = np.minimum(p_foot_2d, [1920, 1080])
-            errors.append(np.linalg.norm(p_foot_2d - foot_2d))
+    for cam, pos in pbar:
+        pbar.update()
+        pbar.set_description(f"Camera {cam} - grid {pos}")
+
+        projected_foot_2d = get_imagecoord_from_worldcoord(
+                  foot_3ds, 
+                dataset.intrinsic_matrices[cam],
+                dataset.extrinsic_matrices[cam]
+        )
+
+        bbox = pom[pos][cam]
+        if bbox is None:
+            continue
+
+        foot_3d = dataset.get_worldcoord_from_pos(pos)
+        foot_2d = [(bbox[0] + bbox[2]) / 2, bbox[3]]
+        p_foot_2d = projected_foot_2d[:, pos]
+        p_foot_2d = np.maximum(p_foot_2d, 0)
+        p_foot_2d = np.minimum(p_foot_2d, [1920, 1080])
+
+        p_error = np.linalg.norm(p_foot_2d - foot_2d)
+        errors.append(p_error)
+        pbar.set_description(f"Camera {cam} - grid {pos} - error {p_error}")
 
     print(f'average error in image pixels: {np.average(errors)}')
-    pass
 
-
-if __name__ == '__main__':
-    test()

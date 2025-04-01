@@ -22,6 +22,7 @@ def create_camera_frustums(Ks, Ts, camera_distance: int,
         center_ray = True, 
         up_triangle = False,
     )
+    camera_vizargs.update(**kwargs)
 
     camera_frustums = camtools.camera.create_camera_frustums(Ks, Ts, **camera_vizargs)
     return camera_frustums

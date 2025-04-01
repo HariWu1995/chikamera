@@ -13,9 +13,9 @@ def make_bg_image_from_screenshots(im_files):
     for im_file in im_files:
         im_i = cv2.imread(im_file)
         if im_sum is None:
-            im_sum = im_i.astype(np.float)
+            im_sum = im_i.astype(np.float64)
         else:
-            im_sum += im_i.astype(np.float)
+            im_sum += im_i.astype(np.float64)
 
     im_sum = (im_sum/len(im_files)).astype(np.uint8)
     cv2.imshow("bg", im_sum)

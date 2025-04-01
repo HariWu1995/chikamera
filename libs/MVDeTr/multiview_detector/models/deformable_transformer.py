@@ -20,6 +20,7 @@ from multiview_detector.models.ops.modules import MSDeformAttn
 
 
 class DeformableTransformerEncoder(nn.Module):
+
     def __init__(self, encoder_layer, num_layers, reference_points=None):
         super().__init__()
         self.layers = _get_clones(encoder_layer, num_layers)
@@ -53,6 +54,7 @@ class DeformableTransformerEncoder(nn.Module):
 
 
 class DeformableTransformerEncoderLayer(nn.Module):
+
     def __init__(self, d_model=256, d_ffn=1024, dropout=0.1, n_levels=4, n_heads=8, n_points=4):
         super().__init__()
 

@@ -5,7 +5,7 @@ import torch
 from torch import nn, Tensor
 from torch.nn import functional as F
 
-#The style of importing Considers compatibility for the diversity of torchvision versions
+# The style of importing Considers compatibility for the diversity of torchvision versions
 try:
     from torchvision.models.utils import load_state_dict_from_url
 except ImportError:

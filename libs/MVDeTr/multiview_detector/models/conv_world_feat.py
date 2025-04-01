@@ -1,8 +1,9 @@
 import numpy as np
 import torch
 from torch import nn
-import torch.nn.functional as F
+from torch.nn import functional as F
 from torchvision.ops import DeformConv2d
+
 from multiview_detector.models.trans_world_feat import create_pos_embedding
 
 
@@ -19,6 +20,7 @@ def create_coord_map(img_size, with_r=False):
 
 
 class ConvWorldFeat(nn.Module):
+
     def __init__(self, num_cam, Rworld_shape, base_dim, hidden_dim=128, stride=2, reduction=None):
         super(ConvWorldFeat, self).__init__()
         self.downsample = nn.Sequential(nn.Conv2d(base_dim, hidden_dim, 3, stride, 1), nn.ReLU(), )
@@ -53,6 +55,7 @@ class ConvWorldFeat(nn.Module):
 
 
 class DeformConvWorldFeat(nn.Module):
+
     def __init__(self, num_cam, Rworld_shape, base_dim, hidden_dim=128, ):
         super(DeformConvWorldFeat, self).__init__()
         self.pos_embedding = create_pos_embedding(Rworld_shape, base_dim // 2)
@@ -76,12 +79,8 @@ class DeformConvWorldFeat(nn.Module):
         return self.world_feat(feats)
 
 
-def test():
+if __name__ == '__main__':
     in_feat = torch.zeros([1, 7, 128, 120, 360])
     model = ConvWorldFeat(7, [120, 360], 128)
     out_feat = model(in_feat)
     pass
-
-
-if __name__ == '__main__':
-    test()
