@@ -198,7 +198,7 @@ if __name__ == '__main__':
     default_ckpt_player_path = "./checkpoints/YOLO/yolov8x.pt"
     default_stub_player_path = "./scripts/advamples/sports_tennis/stubs/player_detections.pkl"
 
-    default_ckpt_court_path = "./checkpoints/resnet50_court_keypoints.pth"
+    default_ckpt_court_path = "./temp/supervision-2/tennis/resnet50_court_keypoints.pth"
 
     import argparse
     parser = argparse.ArgumentParser(description="Football Analysis")

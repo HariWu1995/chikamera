@@ -10,3 +10,4 @@ mmcv-full==1.7.1 -f https://download.openmmlab.com/mmcv/dist/12.4/2.5.1/index.ht
 # mmpose
 # easy-dwpose # light-weight version instead of mmpose
 # controlnet-aux # many versions of pose estimation
+transformers==4.51.3
